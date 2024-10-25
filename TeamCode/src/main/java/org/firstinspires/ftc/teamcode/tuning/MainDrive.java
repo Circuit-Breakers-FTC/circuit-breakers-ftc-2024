@@ -8,8 +8,8 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 
 //programmed by gabi and theo
-@TeleOp(name = "MSFS2024")
-public class uwu extends LinearOpMode{
+@TeleOp(name = "MainDrive")
+public class MainDrive extends LinearOpMode {
 
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -19,7 +19,6 @@ public class uwu extends LinearOpMode{
     private DcMotor armTurn;
     private CRServo intake;
     private Servo extendArm;
-    private Servo swivel;
     private double ticksPerRotation;
 
 
@@ -35,22 +34,22 @@ public class uwu extends LinearOpMode{
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         lift = hardwareMap.get(DcMotor.class, "lift");
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setTargetPosition(0);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armTurn = hardwareMap.get(DcMotor.class, "armTurn");
-        armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armTurn.setTargetPosition(0);
         armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armTurn.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake = hardwareMap.get(CRServo.class, "intake");
-        extendArm = hardwareMap.get(Servo.class,"extendArm");
-        swivel = hardwareMap.get(Servo.class,"swivel");
+        extendArm = hardwareMap.get(Servo.class, "extendArm");
         //     Initialization for NEW robot
-       backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-       backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        extendArm.setPosition(0.4);
 
         boolean isLaunched = false;
         boolean fastMode = false;
@@ -68,40 +67,42 @@ public class uwu extends LinearOpMode{
 
             }
 
-                if (gamepad2.right_bumper) {
-                    lift.setPower(0.25);
-                } else if (gamepad2.left_bumper && lift.getCurrentPosition() > 0) {
-                    lift.setPower(-0.75);
-                } else {
-                    lift.setPower(0);
-                }
+            if (gamepad2.a) {//ground
+                lift.setTargetPosition(0);
+                lift.setPower(1);
+            } else if (gamepad2.b) {//high basket
+                lift.setTargetPosition(-14000);
+                lift.setPower(1);
+            } else if (gamepad2.y){//low basket
+                lift.setTargetPosition(-1000);
+                lift.setPower(1);
+            }
 
-                if (gamepad2.dpad_up) {
-                    intake.setPower(1.0);
-                }else if (gamepad2.dpad_down){
-                    intake.setPower(-1);
-                }else if (gamepad2.dpad_left){
-                    intake.setPower(0);
-                }
-
-
-                if (gamepad2.y){ //basket
-                    armTurn.setTargetPosition(-1100);
-                    armTurn.setPower(0.5);
-                    extendArm.setPosition(1);
-                }
-                else if (gamepad2.a) {//ground
-                    armTurn.setTargetPosition(-1740);
-                    armTurn.setPower(0.5);
-                    extendArm.setPosition(0);
-                }
-                else if (gamepad2.b) {//drive
-                    armTurn.setTargetPosition(-1625);
-                    armTurn.setPower(0.5);
-                    extendArm.setPosition(-1);
-                }
+            if (gamepad2.dpad_up) {
+                intake.setPower(1.0);
+                //push out
+            } else if (gamepad2.dpad_down) {
+                intake.setPower(-1);
+                //suck in
+            } else if (gamepad2.dpad_left) {
+                intake.setPower(0);
+                //stop
+            }
 
 
+            if (gamepad1.y) { //basket
+                armTurn.setTargetPosition(-1400);
+                armTurn.setPower(0.5);
+                extendArm.setPosition(0.75);
+            } else if (gamepad1.a) {//ground
+                armTurn.setTargetPosition(-2304);
+                armTurn.setPower(0.25);
+                extendArm.setPosition(0.75);
+            } else if (gamepad1.b) {//drive
+                armTurn.setTargetPosition(-2000);
+                armTurn.setPower(0.5);
+                extendArm.setPosition(0.75);
+            }
 
 
             double x = -gamepad1.right_stick_x; // Remember, this is reversed!
@@ -120,7 +121,7 @@ public class uwu extends LinearOpMode{
 
 
             if (fastMode) {
-                slowness = .7;
+                slowness = 1.0;
             }
             frontLeft.setPower(frontLeftPower * slowness);
             backLeft.setPower(backLeftPower * slowness);
@@ -131,16 +132,15 @@ public class uwu extends LinearOpMode{
             telemetry.addData("rx ", rx);
             telemetry.addData("fastMode", fastMode);
             telemetry.addData("armLift Current Position", armTurn.getCurrentPosition());
-            telemetry.addData("lift Current Position",lift.getCurrentPosition());
-            telemetry.addData("Target Position",lift.getTargetPosition());
-            telemetry.addData("Servo Current Position",extendArm.getPosition());
+            telemetry.addData("lift Current Position", lift.getCurrentPosition());
+            telemetry.addData("Target Position", lift.getTargetPosition());
+            telemetry.addData("Unfold Arm Current Position", extendArm.getPosition());
             telemetry.update();
 
         }
-
-
     }
 }
+
 
 
 
