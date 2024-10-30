@@ -69,7 +69,7 @@ public class MainDrive extends LinearOpMode {
             }
                 //Lifter
             if (gamepad2.a) {//ground
-                lift.setTargetPosition(0);
+                lift.setTargetPosition(-40);
                 lift.setPower(1);
             } else if (gamepad2.b) {//high basket
                 lift.setTargetPosition(-14000);
@@ -80,10 +80,10 @@ public class MainDrive extends LinearOpMode {
             }
                 //Intake
             if (gamepad2.dpad_up) {
-                intake.setPower(1.0);
+                intake.setPower(0.5);
                 //push out
             } else if (gamepad2.dpad_down) {
-                intake.setPower(-1);
+                intake.setPower(-0.5);
                 //suck in
             } else if (gamepad2.dpad_left) {
                 intake.setPower(0);
@@ -107,19 +107,32 @@ public class MainDrive extends LinearOpMode {
 
 
 
-            double x = -gamepad1.right_stick_x; // Remember, this is reversed!
-            double y = gamepad1.right_stick_y * 1.1; // Counteract imperfect strafing
-            double rx = -gamepad1.left_stick_x;
+            double x = gamepad1.left_stick_x; // Strafe left/right
+            double y = -gamepad1.left_stick_y; // Forward/backward
+            double rotation = gamepad1.right_stick_x; // Rotate
 
-            //  Denominator is the largest motor power (absolute value) or 1
-            //This ensures all the powers maintain the same ratio, but only when
-            //at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-            double frontLeftPower = (y + x + rx) / denominator;
-            double backLeftPower = (y - x + rx) / denominator;
-            double frontRightPower = (y - x - rx) / denominator;
-            double backRightPower = (y + x - rx) / denominator;
+            // Calculate motor powers
+            double frontLeftPower = y + x + rotation;
+            double frontRightPower = y - x - rotation;
+            double backLeftPower = y - x + rotation;
+            double backRightPower = y + x - rotation;
             double slowness = (.3);
+            // Normalize motor powers to ensure they don't exceed 1.0
+            double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
+                    Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+            if (maxPower > 1.0) {
+                frontLeftPower /= maxPower;
+                frontRightPower /= maxPower;
+                backLeftPower /= maxPower;
+                backRightPower /= maxPower;
+            }
+
+            // Set motor powers
+            frontLeft.setPower(frontLeftPower);
+            frontRight.setPower(frontRightPower);
+            backLeft.setPower(backLeftPower);
+            backRight.setPower(backRightPower);
+
 
 
             if (fastMode) {
@@ -131,7 +144,6 @@ public class MainDrive extends LinearOpMode {
             backRight.setPower(backRightPower * slowness);
             telemetry.addData("y ", y);
             telemetry.addData("x ", x);
-            telemetry.addData("rx ", rx);
             telemetry.addData("fastMode", fastMode);
             telemetry.addData("armLift Current Position", armTurn.getCurrentPosition());
             telemetry.addData("lift Current Position", lift.getCurrentPosition());
