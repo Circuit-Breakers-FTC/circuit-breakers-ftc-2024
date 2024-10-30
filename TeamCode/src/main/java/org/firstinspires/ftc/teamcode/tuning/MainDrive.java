@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 //programmed by gabi and theo
 @TeleOp(name = "MainDrive")
@@ -34,12 +35,12 @@ public class MainDrive extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         lift = hardwareMap.get(DcMotor.class, "lift");
-//        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setTargetPosition(0);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armTurn = hardwareMap.get(DcMotor.class, "armTurn");
-//        armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         armTurn.setTargetPosition(0);
         armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armTurn.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -66,7 +67,7 @@ public class MainDrive extends LinearOpMode {
                 telemetry.addLine("left bumper for fast mode!");
 
             }
-
+                //Lifter
             if (gamepad2.a) {//ground
                 lift.setTargetPosition(0);
                 lift.setPower(1);
@@ -77,7 +78,7 @@ public class MainDrive extends LinearOpMode {
                 lift.setTargetPosition(-1000);
                 lift.setPower(1);
             }
-
+                //Intake
             if (gamepad2.dpad_up) {
                 intake.setPower(1.0);
                 //push out
@@ -89,25 +90,26 @@ public class MainDrive extends LinearOpMode {
                 //stop
             }
 
-
+                //Arm code
             if (gamepad1.y) { //basket
-                armTurn.setTargetPosition(-1400);
+                armTurn.setTargetPosition(-1125);
                 armTurn.setPower(0.5);
-                extendArm.setPosition(0.75);
+
             } else if (gamepad1.a) {//ground
-                armTurn.setTargetPosition(-2304);
+                armTurn.setTargetPosition(-1940);
                 armTurn.setPower(0.25);
-                extendArm.setPosition(0.75);
+                //too low, changed it -6
             } else if (gamepad1.b) {//drive
-                armTurn.setTargetPosition(-2000);
+                armTurn.setTargetPosition(-1650);
                 armTurn.setPower(0.5);
-                extendArm.setPosition(0.75);
+
             }
+
 
 
             double x = -gamepad1.right_stick_x; // Remember, this is reversed!
             double y = gamepad1.right_stick_y * 1.1; // Counteract imperfect strafing
-            double rx = gamepad1.left_stick_x;
+            double rx = -gamepad1.left_stick_x;
 
             //  Denominator is the largest motor power (absolute value) or 1
             //This ensures all the powers maintain the same ratio, but only when
@@ -140,8 +142,3 @@ public class MainDrive extends LinearOpMode {
         }
     }
 }
-
-
-
-
-
