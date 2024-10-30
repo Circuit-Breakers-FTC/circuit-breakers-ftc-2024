@@ -34,21 +34,25 @@ public class LeftAutonomous extends LinearOpMode {
         stopMotors();
     }
 
-    private void driveLeft() {
-        frontRight.setPower(-0.5);
-        frontLeft.setPower(0.5);
-        backLeft.setPower(0.5);
-        backRight.setPower(-0.5);
-        sleep(1000);
+   // private void driveLeft() {
+       // frontRight.setPower(-0.5);
+     //   frontLeft.setPower(0.5);
+       // backLeft.setPower(0.5);
+     //   backRight.setPower(-0.5);
+       // sleep(1000);
+    //just removed for now when whole goal is score preloaded sample and level 1 ascent
     }
     private void extendArm(){
         lift.setTargetPosition(-14000);
         armTurn.setTargetPosition(-1125);
 
     }
+
+
     private void jackson(){
 
-        intake.setPower(1.0);
+        intake.setPower(-0.5);
+
         sleep(1000);
     }
 

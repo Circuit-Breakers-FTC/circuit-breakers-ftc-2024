@@ -58,22 +58,28 @@ public class ServoTest extends LinearOpMode {
                 extendArm.setPosition(1);
             }
          if (gamepad1.left_bumper){
-             lift.setPower(1);
+             lift.setPower(0.5);
          }
          else if (gamepad1.right_bumper) {
-             lift.setPower(1);
+             lift.setPower(-0.5);
          }
          else  {
              lift.setPower(0);
          }
 
-         if (gamepad1.dpad_up){
-             armTurn.setPower(0.21);
-         }
-         else if (gamepad1.dpad_down){
-         armTurn.setPower(-0.21);
+            if (gamepad1.y) { //basket
+                armTurn.setTargetPosition(-1125);
+                armTurn.setPower(0.5);
 
-         }
+            } else if (gamepad1.a) {//ground
+                armTurn.setTargetPosition(-1940);
+                armTurn.setPower(0.25);
+                //too low, changed it -6
+            } else if (gamepad1.b) {//drive
+                armTurn.setTargetPosition(-1650);
+                armTurn.setPower(0.5);
+
+            }
          else {
              armTurn.setPower(0);
          }
