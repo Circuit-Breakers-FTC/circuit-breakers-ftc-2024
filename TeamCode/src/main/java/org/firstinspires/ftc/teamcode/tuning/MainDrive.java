@@ -47,8 +47,8 @@ public class MainDrive extends LinearOpMode {
         intake = hardwareMap.get(CRServo.class, "intake");
         extendArm = hardwareMap.get(Servo.class, "extendArm");
         //     Initialization for NEW robot
-        backRight.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
         extendArm.setPosition(0.4);
 
@@ -60,7 +60,7 @@ public class MainDrive extends LinearOpMode {
             boolean i = gamepad1.b;
             //   directions
             int target = 0;
-            if (gamepad1.left_bumper) {
+            if (gamepad1.right_bumper) {
                 fastMode = true;
             } else {
                 fastMode = false;
@@ -69,20 +69,20 @@ public class MainDrive extends LinearOpMode {
             }
                 //Lifter
             if (gamepad2.a) {//ground
-                lift.setTargetPosition(-40);
+                lift.setTargetPosition(0);
                 lift.setPower(1);
             } else if (gamepad2.b) {//high basket
-                lift.setTargetPosition(-14000);
+                lift.setTargetPosition(-1900);
                 lift.setPower(1);
             } else if (gamepad2.y){//low basket
                 lift.setTargetPosition(-1000);
                 lift.setPower(1);
             }
                 //Intake
-            if (gamepad2.dpad_up) {
+            if (gamepad2.dpad_down) {
                 intake.setPower(0.5);
                 //push out
-            } else if (gamepad2.dpad_down) {
+            } else if (gamepad2.dpad_up) {
                 intake.setPower(-0.5);
                 //suck in
             } else if (gamepad2.dpad_left) {
@@ -92,11 +92,11 @@ public class MainDrive extends LinearOpMode {
 
                 //Arm code
             if (gamepad1.y) { //basket
-                armTurn.setTargetPosition(-1125);
+                armTurn.setTargetPosition(-1000);
                 armTurn.setPower(0.5);
 
             } else if (gamepad1.a) {//ground
-                armTurn.setTargetPosition(-1940);
+                armTurn.setTargetPosition(-1880);
                 armTurn.setPower(0.25);
                 //too low, changed it -6
             } else if (gamepad1.b) {//drive
@@ -104,6 +104,27 @@ public class MainDrive extends LinearOpMode {
                 armTurn.setPower(0.5);
 
             }
+            if (gamepad1.dpad_up){
+                frontLeft.setPower(1);
+            } else {
+                frontLeft.setPower(0);
+            }
+            if (gamepad1.dpad_right){
+                frontRight.setPower(1);
+            } else {
+                frontRight.setPower(0);
+            }
+            if (gamepad1.dpad_left){
+                backLeft.setPower(1);
+            } else {
+                backLeft.setPower(0);
+            }if (gamepad1.dpad_down){
+                backRight.setPower(1);
+            } else {
+                backRight.setPower(0);
+            }
+
+
 
 
 
