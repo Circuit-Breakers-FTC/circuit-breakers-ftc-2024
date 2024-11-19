@@ -3,12 +3,10 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "RightAutonomous")
-public class LeftAutonomous extends LinearOpMode {
+public class AutoSpecimen extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -18,6 +16,11 @@ public class LeftAutonomous extends LinearOpMode {
     private CRServo intake;
 
     private ElapsedTime runtime = new ElapsedTime();
+
+    private final int ARM_MOTOR_POSITION_ABOVE_CHAMBER = -1290;
+    private final int ARM_MOTOR_POSITION_TOUCHING_CHAMBER = -1295;
+    private final double POWER_MID = 0.5;
+    private final int sleepTime=1000;
 
     @Override
     public void runOpMode() {
@@ -42,8 +45,20 @@ public class LeftAutonomous extends LinearOpMode {
         waitForStart();
         runtime.reset();
         if (opModeIsActive()) {
-            move();
-            extendArm();
+            raiseArmAboveChamber();
+            sleep(sleepTime);
+            driveForward();
+            sleep(sleepTime);
+            armDown();
+            sleep(sleepTime);
+            driveBack();
+            sleep(sleepTime);
+            reset();
+            strafe();
+
+           /* strafe();
+            moveAbit();
+            moveArm(-1290);
             sleep(2000);
             raiseLinearSlider();
             sleep(2000);
@@ -59,19 +74,44 @@ public class LeftAutonomous extends LinearOpMode {
             sleep(2000);
             return4();
             sleep(2000);
-//            move(-0.25,2000);
+
+            */
+     //          move(-0.25,2000);
 
 
         }
     }
 
-    private void extendArm() {
-        armTurn.setTargetPosition(-890);
+    private void raiseArmAboveChamber() {
+        moveArm(ARM_MOTOR_POSITION_ABOVE_CHAMBER);
+    }
+    private void driveForward() {
+        frontLeft.setPower(POWER_MID);
+        frontRight.setPower(POWER_MID);
+        backLeft.setPower(POWER_MID);
+        backRight.setPower(POWER_MID);
+    }
+    private void armDown(){
+        moveArm(ARM_MOTOR_POSITION_TOUCHING_CHAMBER);
+    }
+    private void driveBack() {
+        frontLeft.setPower(-0.5);
+        frontRight.setPower(-0.5);
+        backLeft.setPower(-0.5);
+        backRight.setPower(-0.5);
+    }
+    private void reset() {
+        armTurn.setTargetPosition(0);
+        armTurn.setPower(0.5);
+    }
+
+    private void moveArm(int extendAmount) {
+        armTurn.setTargetPosition(extendAmount);
         armTurn.setPower(0.5);
     }
 
     private void raiseLinearSlider() {
-        lift.setTargetPosition(-1875);
+        lift.setTargetPosition(-1850);
         lift.setPower(0.5);
     }
     private void scoringPosition(){
@@ -98,12 +138,26 @@ public class LeftAutonomous extends LinearOpMode {
         armTurn.setPower(0.25);
     }
 
-    private void move(){
-        frontLeft.setPower(-0.5);
+
+    private void strafe (){
+        frontLeft.setPower(0.5);
         backLeft.setPower(-0.5);
+        frontRight.setPower(-0.5);
+        backRight.setPower(0.5);
+        sleep(800);
+        frontLeft.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
+        frontRight.setPower(0);
+
+    }
+
+    private void moveAbit (){
+        frontLeft.setPower(0.5);
+        backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(500);
+        sleep(220);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);

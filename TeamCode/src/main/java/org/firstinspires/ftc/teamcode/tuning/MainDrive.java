@@ -72,7 +72,7 @@ public class MainDrive extends LinearOpMode {
                 lift.setTargetPosition(0);
                 lift.setPower(1);
             } else if (gamepad2.b) {//high basket
-                lift.setTargetPosition(-1900);
+                lift.setTargetPosition(-1825);
                 lift.setPower(1);
             } else if (gamepad2.y){//low basket
                 lift.setTargetPosition(-1000);
@@ -80,7 +80,7 @@ public class MainDrive extends LinearOpMode {
             }
                 //Intake
             if (gamepad2.dpad_down) {
-                intake.setPower(0.5);
+                intake.setPower(0.25);
                 //push out
             } else if (gamepad2.dpad_up) {
                 intake.setPower(-0.5);
@@ -95,13 +95,17 @@ public class MainDrive extends LinearOpMode {
                 armTurn.setTargetPosition(-1000);
                 armTurn.setPower(0.5);
 
-            } else if (gamepad1.a) {//ground
+            } else if (gamepad1.b) {//ground
                 armTurn.setTargetPosition(-1880);
                 armTurn.setPower(0.25);
                 //too low, changed it -6
-            } else if (gamepad1.b) {//drive
+            } else if (gamepad1.x) {//drive
                 armTurn.setTargetPosition(-1650);
                 armTurn.setPower(0.5);
+            } else if (gamepad1.a) {//ground
+                armTurn.setTargetPosition(-1900);
+                armTurn.setPower(0.25);
+
 
             }
             if (gamepad1.dpad_up){

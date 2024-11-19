@@ -94,15 +94,20 @@ public class MainDrive1p extends LinearOpMode {
                 armTurn.setTargetPosition(-1125);
                 armTurn.setPower(0.5);
 
-            } else if (gamepad1.a) {//ground
-                armTurn.setTargetPosition(-1890);
+            } else if (gamepad1.a) {//ground0
+                armTurn.setTargetPosition(-1900);
                 armTurn.setPower(0.25);
                 //too low, changed it -6
-            } else if (gamepad1.b) {//drive
+            } else if (gamepad1.x) {//drive
                 armTurn.setTargetPosition(-1650);
                 armTurn.setPower(0.5);
 
-            } else if (gamepad1.x)
+            } else if (gamepad1.b) {//right above the ground
+                armTurn.setTargetPosition(-1880);
+                armTurn.setPower(0.5);
+
+
+            }
 
 
 
