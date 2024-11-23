@@ -22,12 +22,12 @@ public class maindriveforbotv2 extends LinearOpMode {
 
     public static double CLAW_UP = 0.85;
     public static double CLAW_DOWN = 0.6;
-    public static double CLAW_OPEN = 0.8;
+    public static double CLAW_OPEN = 0.65;
     public static double CLAW_CLOSE = 0.0;
     public static double CLAW_ONE = 0.5;
-    public static double CLAW_TWO = 0.65;
-    public static double CLAW_THREE = 0.65;
-    public static double CLAW_FOUR = 0.65;
+    public static double CLAW_TWO = 0.325;
+    public static double CLAW_THREE = 0.15;
+    public static double CLAW_FOUR = 0.675;
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */

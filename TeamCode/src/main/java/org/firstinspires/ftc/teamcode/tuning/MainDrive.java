@@ -132,6 +132,7 @@ public class MainDrive extends LinearOpMode {
 
 
 
+
             double x = gamepad1.left_stick_x; // Strafe left/right
             double y = -gamepad1.left_stick_y; // Forward/backward
             double rotation = gamepad1.right_stick_x; // Rotate
