@@ -74,9 +74,14 @@ public class MainDrive extends LinearOpMode {
             } else if (gamepad2.b) {//high basket
                 lift.setTargetPosition(-1825);
                 lift.setPower(1);
-            } else if (gamepad2.y){//low basket
+            } else if (gamepad2.y){//hang end position
                 lift.setTargetPosition(-1000);
                 lift.setPower(1);
+            } else if (gamepad2.x){//hang starting position
+                lift.setTargetPosition(-1350);
+                lift.setPower(1);
+                armTurn.setTargetPosition(-900);
+                armTurn.setPower(1);
             }
                 //Intake
             if (gamepad2.dpad_down) {
@@ -129,7 +134,9 @@ public class MainDrive extends LinearOpMode {
             }
 
 
-
+            //   if (gamepad2.left_bumper){
+            //   lift.setPower();
+            //  }
 
 
             double x = gamepad1.left_stick_x; // Strafe left/right

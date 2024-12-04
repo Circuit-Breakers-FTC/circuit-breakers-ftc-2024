@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "RightAutonomous")
+@Autonomous(name = "AutoHighBin")
 public class AutoHighBin extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;

@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "RightAutonomous")
+@Autonomous(name = "AutoSpecimen")
 public class AutoSpecimen extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -20,7 +20,7 @@ public class AutoSpecimen extends LinearOpMode {
     private final int ARM_MOTOR_POSITION_ABOVE_CHAMBER = -1290;
     private final int ARM_MOTOR_POSITION_TOUCHING_CHAMBER = -1295;
     private final double POWER_MID = 0.5;
-    private final int sleepTime=1000;
+    private final int sleepTime = 3000;
 
     @Override
     public void runOpMode() {
@@ -48,7 +48,7 @@ public class AutoSpecimen extends LinearOpMode {
             raiseArmAboveChamber();
             sleep(sleepTime);
             driveForward();
-            sleep(sleepTime);
+            sleep(sleepTime + 1000);
             armDown();
             sleep(sleepTime);
             driveBack();
@@ -57,7 +57,7 @@ public class AutoSpecimen extends LinearOpMode {
             strafe();
 
            /* strafe();
-            moveAbit();
+            moveABit();
             moveArm(-1290);
             sleep(2000);
             raiseLinearSlider();
@@ -90,6 +90,11 @@ public class AutoSpecimen extends LinearOpMode {
         frontRight.setPower(POWER_MID);
         backLeft.setPower(POWER_MID);
         backRight.setPower(POWER_MID);
+        sleep(1000);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
     private void armDown(){
         moveArm(ARM_MOTOR_POSITION_TOUCHING_CHAMBER);
@@ -99,12 +104,17 @@ public class AutoSpecimen extends LinearOpMode {
         frontRight.setPower(-0.5);
         backLeft.setPower(-0.5);
         backRight.setPower(-0.5);
+        sleep(1000);
+        frontLeft.setPower(0);
+        frontRight.setPower(0);
+        backLeft.setPower(0);
+        backRight.setPower(0);
     }
     private void reset() {
         armTurn.setTargetPosition(0);
         armTurn.setPower(0.5);
     }
-
+// end of used code
     private void moveArm(int extendAmount) {
         armTurn.setTargetPosition(extendAmount);
         armTurn.setPower(0.5);
