@@ -124,20 +124,14 @@ public class AutoHighBinDifPosition extends LinearOpMode {
 
 
     private void strafe (){
-        frontLeft.setPower(MIDPOWER);
-        backLeft.setPower(-MIDPOWER);
-        frontRight.setPower(-MIDPOWER);
-        backRight.setPower(MIDPOWER);
+        setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
         sleep(800);
         driveMotorsOff();
 
     }
 
     private void moveAbit (){
-        frontLeft.setPower(MIDPOWER);
-        backLeft.setPower(MIDPOWER);
-        frontRight.setPower(MIDPOWER);
-        backRight.setPower(MIDPOWER);
+        setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER);
         sleep(220);
         driveMotorsOff();
 
