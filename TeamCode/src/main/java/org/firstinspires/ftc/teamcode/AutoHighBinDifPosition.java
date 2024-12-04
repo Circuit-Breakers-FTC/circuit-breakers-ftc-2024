@@ -42,12 +42,11 @@ public class AutoHighBinDifPosition extends LinearOpMode {
         runtime.reset();
         if (opModeIsActive()) {
             goToBasket();
-            moveAbit();
             extendArm();
             sleep(2000);
             raiseLinearSlider();
             sleep(2000);
-            scoringPosition();
+           /* scoringPosition();
             sleep(2000);
             scoreSample();
             sleep(2000);
@@ -58,7 +57,7 @@ public class AutoHighBinDifPosition extends LinearOpMode {
             return3();
             sleep(2000);
             return4();
-            sleep(2000);
+            sleep(2000); */
 
 
         }

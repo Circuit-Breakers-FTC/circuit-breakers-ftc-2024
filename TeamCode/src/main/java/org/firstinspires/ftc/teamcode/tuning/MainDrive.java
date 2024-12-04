@@ -85,7 +85,7 @@ public class MainDrive extends LinearOpMode {
             }
                 //Intake
             if (gamepad2.dpad_down) {
-                intake.setPower(0.25);
+                intake.setPower(0.4);
                 //push out
             } else if (gamepad2.dpad_up) {
                 intake.setPower(-0.5);
