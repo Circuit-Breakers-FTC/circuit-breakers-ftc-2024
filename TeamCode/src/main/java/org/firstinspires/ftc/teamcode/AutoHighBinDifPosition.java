@@ -65,10 +65,7 @@ public class AutoHighBinDifPosition extends LinearOpMode {
     }
 
     private void driveMotorsOff() {
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontRight.setPower(0);
+        setDriveMotors(0, 0, 0, 0);
     }
 
     private void setDriveMotors(double frontright, double frontleft, double backright, double backleft) {
