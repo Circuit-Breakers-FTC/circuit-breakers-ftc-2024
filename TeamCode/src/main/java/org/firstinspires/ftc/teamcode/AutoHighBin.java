@@ -103,7 +103,7 @@ public class AutoHighBin extends LinearOpMode {
         backLeft.setPower(-0.5);
         frontRight.setPower(-0.5);
         backRight.setPower(0.5);
-        sleep(800);
+        sleep(900);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);

@@ -46,7 +46,7 @@ public class AutoHighBinDifPosition extends LinearOpMode {
             sleep(2000);
             raiseLinearSlider();
             sleep(2000);
-           /* scoringPosition();
+            scoringPosition();
             sleep(2000);
             scoreSample();
             sleep(2000);
@@ -57,7 +57,7 @@ public class AutoHighBinDifPosition extends LinearOpMode {
             return3();
             sleep(2000);
             return4();
-            sleep(2000); */
+            sleep(2000);
 
 
         }
@@ -78,12 +78,21 @@ public class AutoHighBinDifPosition extends LinearOpMode {
         setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
         sleep(2000);
         driveMotorsOff();
+
+        sleep(1000);
+
         setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER); //Forward
         sleep(500);
         driveMotorsOff();
+
+        sleep(1000);
+
         setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
-        sleep(250);
+        sleep(350);
         driveMotorsOff();
+
+        sleep(1000);
+        
         setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER); //Forward
         sleep(1000);
         driveMotorsOff();
