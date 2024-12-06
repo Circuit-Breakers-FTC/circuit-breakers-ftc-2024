@@ -1,3 +1,5 @@
+//Import
+
 package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,6 +12,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 @Config
 @Autonomous(name = "AutoHighBinDifPosition")
 public class AutoHighBinDifPosition extends LinearOpMode {
+
+    //Define Motors
+
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -17,11 +22,21 @@ public class AutoHighBinDifPosition extends LinearOpMode {
     private DcMotor lift;
     private DcMotor armTurn;
     private CRServo intake;
+    public static double LOWPOWER = 0.25;
     public static double MIDPOWER = 0.5;
+    public static double HIGHPOWER = 1;
     private ElapsedTime runtime = new ElapsedTime();
+    public static int rightStrafe1 = 1600;
+    public static int forwardSubDodge = 500;
+    public static int rightStrafe2 = 900;
+    public static int forwardToBasket = 790;
+
 
     @Override
     public void runOpMode() {
+
+        //Set Motors
+
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
@@ -37,30 +52,67 @@ public class AutoHighBinDifPosition extends LinearOpMode {
         armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armTurn.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake = hardwareMap.get(CRServo.class, "intake");
-
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         waitForStart();
         runtime.reset();
-        if (opModeIsActive()) {
-            goToBasket();
-            extendArm();
-            sleep(1000);
-            raiseLinearSlider();
-            sleep(1000);
-            scoringPosition();
-            sleep(1000);
-            scoreSample();
-            sleep(1000);
-            return1();
-            sleep(1000);
-            return2();
-            sleep(1000);
-            return3();
-            sleep(1000);
-            return4();
-            sleep(1000);
 
+        //Main Auto Code
+
+        if (opModeIsActive()) {
+            rightStrafe1();
+
+            sleep(1000); //Wait between actions
+
+            forwardSubDodge();
+
+            sleep(1000); //Wait between actions
+
+            rightStrafe2();
+
+            sleep(1000); //Wait between actions
+
+            forwardToBasket();
+
+            sleep(1000); //Wait between actions
+
+            //extendArm();
+            intakeArmUp();
+
+            sleep(1000); //Wait between actions
+
+            //raiseLinearSlider();
+            raiseLinearSlide();
+
+            sleep(1000); //Wait between actions
+
+            //scoringPosition();
+            intakeArmSLantBasket();
+
+            sleep(1000); //Wait between actions
+
+            //scoreSample();
+            intakeOut();
+
+            sleep(1000); //Wait between actions
+
+            //return1();
+            intakeOff();
+
+            sleep(1000); //Wait between actions
+
+            //return2();
+            intakeArmLowerPosition();
+
+            sleep(1000); //Wait between actions
+
+            //return3();
+            linearSlideDown();
+
+            sleep(1000); //Wait between actions
+
+            //return4();
+            intakeArmStartPosition();
 
         }
     }
@@ -76,72 +128,64 @@ public class AutoHighBinDifPosition extends LinearOpMode {
         backLeft.setPower(backleft);
     }
 
-    private void goToBasket() {
+    private void rightStrafe1() {
         setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
-        sleep(1600);
+        sleep(rightStrafe1);
         driveMotorsOff();
+    }
 
-        sleep(1000);
-
+    private void forwardSubDodge() {
         setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER); //Forward
-        sleep(500);
+        sleep(forwardSubDodge);
         driveMotorsOff();
+    }
 
-        sleep(1000);
-
+    private void rightStrafe2() {
         setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
-        sleep(1200);
+        sleep(rightStrafe2);
         driveMotorsOff();
+    }
 
+    private void forwardToBasket() {
         setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER); //Forward
-        sleep(790);
+        sleep(forwardToBasket);
         driveMotorsOff();
-}
-    private void extendArm() {
+    }
+
+    private void intakeArmUp() {
         armTurn.setTargetPosition(-890);
         armTurn.setPower(MIDPOWER);
     }
 
-    private void raiseLinearSlider() {
+    private void raiseLinearSlide() {
         lift.setTargetPosition(-1850);
         lift.setPower(MIDPOWER);
     }
-    private void scoringPosition(){
+    private void intakeArmSLantBasket(){
         armTurn.setTargetPosition(-1125);
         armTurn.setPower(MIDPOWER);
     }
 
-    private void scoreSample(){
+    private void intakeOut(){
         intake.setPower(MIDPOWER);
     }
-    private void return1(){
+
+    private void intakeOff(){
         intake.setPower(0);
     }
-    private void return2(){
+
+    private void intakeArmLowerPosition(){
         armTurn.setTargetPosition(-890);
         armTurn.setPower(MIDPOWER);
     }
-    private void return3(){
+
+    private void linearSlideDown(){
         lift.setTargetPosition(0);
         armTurn.setPower(MIDPOWER);
     }
-    private void return4(){
+
+    private void intakeArmStartPosition(){
         armTurn.setTargetPosition(0);
         armTurn.setPower(0.25);
-    }
-
-
-    private void strafe (){
-        setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
-        sleep(800);
-        driveMotorsOff();
-
-    }
-
-    private void moveAbit (){
-        setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER);
-        sleep(220);
-        driveMotorsOff();
-
     }
 }
