@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -6,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Config
 @Autonomous(name = "AutoHighBinDifPosition")
 public class AutoHighBinDifPosition extends LinearOpMode {
     private DcMotor frontRight;
@@ -15,7 +17,7 @@ public class AutoHighBinDifPosition extends LinearOpMode {
     private DcMotor lift;
     private DcMotor armTurn;
     private CRServo intake;
-    private double MIDPOWER = 0.5;
+    public static double MIDPOWER = 0.5;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -43,21 +45,21 @@ public class AutoHighBinDifPosition extends LinearOpMode {
         if (opModeIsActive()) {
             goToBasket();
             extendArm();
-            sleep(2000);
+            sleep(1000);
             raiseLinearSlider();
-            sleep(2000);
+            sleep(1000);
             scoringPosition();
-            sleep(2000);
+            sleep(1000);
             scoreSample();
-            sleep(2000);
+            sleep(1000);
             return1();
-            sleep(2000);
+            sleep(1000);
             return2();
-            sleep(2000);
+            sleep(1000);
             return3();
-            sleep(2000);
+            sleep(1000);
             return4();
-            sleep(2000);
+            sleep(1000);
 
 
         }
@@ -76,7 +78,7 @@ public class AutoHighBinDifPosition extends LinearOpMode {
 
     private void goToBasket() {
         setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
-        sleep(2000);
+        sleep(1600);
         driveMotorsOff();
 
         sleep(1000);
@@ -88,13 +90,11 @@ public class AutoHighBinDifPosition extends LinearOpMode {
         sleep(1000);
 
         setDriveMotors(-MIDPOWER, MIDPOWER, MIDPOWER, -MIDPOWER); //Strafe
-        sleep(350);
+        sleep(1200);
         driveMotorsOff();
 
-        sleep(1000);
-        
         setDriveMotors(MIDPOWER, MIDPOWER, MIDPOWER, MIDPOWER); //Forward
-        sleep(1000);
+        sleep(790);
         driveMotorsOff();
 }
     private void extendArm() {
