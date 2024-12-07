@@ -38,7 +38,7 @@ public class DrivingV2 extends LinearOpMode {
                 frontLeftPower /= maxPower;
                 frontRightPower /= maxPower;
                 backLeftPower /= maxPower;
-                backRightPower /= maxPower
+                    backRightPower /= maxPower;
             }
 
             // Set motor powers
