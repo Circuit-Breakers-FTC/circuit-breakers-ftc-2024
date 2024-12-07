@@ -25,9 +25,10 @@ public class AutoSpecimen extends LinearOpMode {
     public static double LOWPOWER = 0.25;
     public static double MIDPOWER = 0.5;
     public static double HIGHPOWER = 1;
+    public static double OFF = 0;
     private ElapsedTime runtime = new ElapsedTime();
-    public static int raiseArmToBarHeight = -1000;
-    public static int forwardToBars = 1250;
+    public static int raiseArmToBarHeight = -1100;
+    public static int forwardToBars = 50;
     public static int use1 = 900;
     public static int use2 = 790;
 
@@ -65,6 +66,11 @@ public class AutoSpecimen extends LinearOpMode {
 
             while (armTurn.isBusy()) {
                 forwardToBars();
+
+            intakeIn();
+
+            backLeaveHanging();
+
             }
 
         }
@@ -95,13 +101,20 @@ public class AutoSpecimen extends LinearOpMode {
         setDriveMotors(0, 0, 0, 0);
     }
 
+    private void intakeIn() {
+        intake.setPower(-LOWPOWER);
+        sleep(4000);
+        intake.setPower(0);
+    }
+
+
     private void lowerArmToHangHeight () {
         armTurn.setTargetPosition(-1100);
         armTurn.setPower(MIDPOWER);
     }
 
     private void backLeaveHanging() {
-        setDriveMotors(LOWPOWER, LOWPOWER, LOWPOWER, LOWPOWER);
+        setDriveMotors(-LOWPOWER, -LOWPOWER, -LOWPOWER, -LOWPOWER);
         sleep(500);
         driveMotorsOff();
     }

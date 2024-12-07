@@ -75,13 +75,8 @@ public class MainDrive extends LinearOpMode {
                 lift.setTargetPosition(-1825);
                 lift.setPower(1);
             } else if (gamepad2.y){//hang end position
-                lift.setTargetPosition(-1000);
+                lift.setTargetPosition(-1900);
                 lift.setPower(1);
-            } else if (gamepad2.x){//hang starting position
-                lift.setTargetPosition(-1350);
-                lift.setPower(1);
-                armTurn.setTargetPosition(-900);
-                armTurn.setPower(1);
             }
                 //Intake
             if (gamepad2.dpad_down) {
