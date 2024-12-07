@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -42,14 +43,14 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
         public boolean run(@NonNull TelemetryPacket packet) {
             // powers on motor, if it is not on
             if (!initialized) {
-                lift.setPower(0.8);
+                lift.setPower(-0.8);
                 initialized = true;
             }
 
             // checks lift's current position
             double pos = lift.getCurrentPosition();
             packet.put("liftPos", pos);
-            if (pos < -1850) {
+            if (pos > -1850) {
                 // true causes the action to rerun
                 return true;
             } else {
@@ -68,13 +69,13 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             if (!initialized) {
-                lift.setPower(-0.8);
+                lift.setPower(0.8);
                 initialized = true;
             }
 
             double pos = lift.getCurrentPosition();
             packet.put("liftPos", pos);
-            if (pos > 0) {
+            if (pos < 0) {
                 return true;
             } else {
                 lift.setPower(0);
@@ -140,40 +141,32 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
 
     @Override
     public void runOpMode () {
-        LiftUp liftUp = new LiftUp();
-        LiftDown liftDown = new LiftDown();
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         lift = hardwareMap.get(DcMotor.class, "lift");
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setTargetPosition(0);
-        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         armTurn = hardwareMap.get(DcMotor.class, "armTurn");
         armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armTurn.setTargetPosition(0);
-        armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armTurn.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        armTurn.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intake = hardwareMap.get(CRServo.class, "intake");
 
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        telemetry.addData("position", lift.getCurrentPosition());
+        telemetry.update();
         waitForStart();
         runtime.reset();
 
 
-
-
-
-
         Actions.runBlocking(
                 new SequentialAction(
-
                         liftUp(),
                         liftDown()
-
                 )
         );
     }
