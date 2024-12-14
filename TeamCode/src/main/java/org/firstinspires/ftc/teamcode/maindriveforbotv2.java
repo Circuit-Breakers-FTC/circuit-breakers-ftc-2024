@@ -25,6 +25,9 @@ public class maindriveforbotv2 extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor backLeft;
     private DcMotor backRight;
+    private DcMotor specimanLifter;
+    private Servo specimanArm;
+    private Servo specimanClaw;
 
     //Changable Variables
 
@@ -36,6 +39,8 @@ public class maindriveforbotv2 extends LinearOpMode {
     public static double CLAW_TWO = 0.325;
     public static double CLAW_THREE = 0.15;
     public static double CLAW_FOUR = 0.675;
+    public static double SPECIMANCLAWCLOSE = 0.5;
+    public static double SPECIMANARMUP = 0;
 
     //Function is Executed when OpMode is initiated
 
@@ -44,12 +49,12 @@ public class maindriveforbotv2 extends LinearOpMode {
 
         //Set Drive Motors
 
-        frontLeft = hardwareMap.get(DcMotor.class, "backRight");
-        frontRight = hardwareMap.get(DcMotor.class, "backLeft");
-        backLeft = hardwareMap.get(DcMotor.class, "frontRight");
-        backRight = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
+        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
+        backLeft = hardwareMap.get(DcMotor.class, "backLeft");
+        backRight = hardwareMap.get(DcMotor.class, "backRight");
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.REVERSE);
+        frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
 
@@ -60,6 +65,12 @@ public class maindriveforbotv2 extends LinearOpMode {
         lowerClaw = hardwareMap.get(Servo.class, "lowerClaw");
         armRotate = hardwareMap.get(DcMotor.class, "armRotate");
 
+        //Set Speciman Arm Motors
+
+        specimanLifter = hardwareMap.get(DcMotor.class,"specimanLifter");
+        specimanClaw = hardwareMap.get(Servo.class,"specimanClaw");
+        specimanArm = hardwareMap.get(Servo.class, "specimanArm");
+
         waitForStart(); //Wait for Opmode Activation
 
         while (opModeIsActive()) {
@@ -69,44 +80,52 @@ public class maindriveforbotv2 extends LinearOpMode {
 
             //Main Driving Options
                 boolean fastMode = false;
-                if (gamepad1.right_bumper) {
+                if (gamepad1.left_stick_button) {
                     fastMode = true;
                 } else {
                     fastMode = false;
                   telemetry.addLine("right bumper for fast mode!");
                 }
 
-                if (gamepad2.y) {
+                if (gamepad1.y) {
                     lowerClaw.setPosition(CLAW_UP);
                 }
 
-                if (gamepad2.a) {
+                if (gamepad1.a) {
                     lowerClaw.setPosition(CLAW_DOWN);
                 }
 
-                if (gamepad2.x) {
+                if (gamepad1.x) {
                     openCloseClaw.setPosition(CLAW_OPEN);
                 }
 
-                if (gamepad2.b) {
+                if (gamepad1.b) {
                     openCloseClaw.setPosition(CLAW_CLOSE);
                 }
 
-                if (gamepad2.dpad_up) {
+                if (gamepad1.dpad_up) {
                     rotateClaw.setPosition(CLAW_ONE);
                 }
 
-                if (gamepad2.dpad_right) {
+                if (gamepad1.dpad_right) {
                     rotateClaw.setPosition(CLAW_TWO);
                 }
 
-                if (gamepad2.dpad_down) {
+                if (gamepad1.dpad_down) {
                     rotateClaw.setPosition(CLAW_THREE);
                 }
 
-                if (gamepad2.dpad_left) {
+                if (gamepad1.dpad_left) {
                     rotateClaw.setPosition(CLAW_FOUR);
+                }
 
+                if (gamepad1.left_bumper) {
+                    specimanArm.setPosition(SPECIMANCLAWCLOSE);
+                }
+
+                if (gamepad1.right_bumper) {
+                    specimanClaw.setPosition(SPECIMANARMUP);
+                }
 
                     //Driving Options
 
@@ -145,8 +164,7 @@ public class maindriveforbotv2 extends LinearOpMode {
                     backLeft.setPower(backLeftPower * slowness);
                     backRight.setPower(backRightPower * slowness);
 
-                }
+
             }
         }
-
     }
