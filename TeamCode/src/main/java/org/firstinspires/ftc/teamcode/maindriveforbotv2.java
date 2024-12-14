@@ -99,23 +99,23 @@ public class maindriveforbotv2 extends LinearOpMode {
                     openCloseClaw.setPosition(CLAW_OPEN);
                 }
 
-                if (gamepad1.b) {
+                if (gamepad2.b) {
                     openCloseClaw.setPosition(CLAW_CLOSE);
                 }
 
-                if (gamepad1.dpad_up) {
+                if (gamepad2.dpad_up) {
                     rotateClaw.setPosition(CLAW_ONE);
                 }
 
-                if (gamepad1.dpad_right) {
+                if (gamepad2.dpad_right) {
                     rotateClaw.setPosition(CLAW_TWO);
                 }
 
-                if (gamepad1.dpad_down) {
+                if (gamepad2.dpad_down) {
                     rotateClaw.setPosition(CLAW_THREE);
                 }
 
-                if (gamepad1.dpad_left) {
+                if (gamepad2.dpad_left) {
                     rotateClaw.setPosition(CLAW_FOUR);
                 }
 
