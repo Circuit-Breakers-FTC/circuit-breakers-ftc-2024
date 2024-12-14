@@ -9,17 +9,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import androidx.annotation.NonNull;
 
 // RR-specific imports
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.acmerobotics.roadrunner.Vector2d;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
-import org.firstinspires.ftc.teamcode.TankDrive;
-import org.firstinspires.ftc.teamcode.tuning.TuningOpModes;
 
 
 @Autonomous(name = "RoadrunnerAuto")
@@ -50,7 +46,7 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
             // checks lift's current position
             double pos = lift.getCurrentPosition();
             packet.put("liftPos", pos);
-            if (pos > -1850) {
+            if (pos < -1850) {
                 // true causes the action to rerun
                 return true;
             } else {
@@ -86,6 +82,101 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
     public Action liftDown () {
         return new LiftDown();
     }
+    public class ArmUp implements Action {
+        private boolean initialized = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                armTurn.setPower(-0.8);
+                initialized = true;
+            }
+
+            double pos = armTurn.getCurrentPosition();
+            packet.put("armPos", pos);
+            if (pos > -1125) {
+                return true;
+            } else {
+                armTurn.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action armUp() {
+        return new ArmUp();
+    }
+    public class ArmVertUp implements Action {
+        private boolean initialized = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                armTurn.setPower(-0.8);
+                initialized = true;
+            }
+
+            double pos = armTurn.getCurrentPosition();
+            packet.put("armPos", pos);
+            if (pos >-890) {
+                return true;
+            } else {
+                armTurn.setPower(0);
+                return false;
+            }
+        }
+    }
+
+    public Action  armVertUp() {
+        return new ArmVertUp();
+    }
+    public class ArmVertDown implements Action {
+        private boolean initialized = false;
+
+        @Override
+    public boolean run(@NonNull TelemetryPacket packet) {
+        if (!initialized) {
+            armTurn.setPower(0.8);
+            initialized = true;
+        }
+
+        double pos = armTurn.getCurrentPosition();
+        packet.put("armPos", pos);
+        if (pos <-890) {
+            return true;
+        } else {
+            armTurn.setPower(0);
+            return false;
+        }
+    }
+}
+
+public Action armVertDown () {
+    return new ArmVertDown();
+}
+    public class ArmBack implements Action {
+        private boolean initialized = false;
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            if (!initialized) {
+                armTurn.setPower(0.8);
+                initialized = true;
+            }
+
+            double pos = armTurn.getCurrentPosition();
+            packet.put("armPos", pos);
+            if (pos > 0) {
+                return true;
+            } else {
+                armTurn.setPower(0);
+                return false;
+            }
+        }
+    }
+    public Action armBack() {
+        return new ArmBack();
+    }
+
     public class Outtake implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
@@ -116,28 +207,23 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
     public Action stopIntake () {
         return new StopIntake();
     }
-    private void strafe() {
-        Pose2d beginPose = new Pose2d(0, 0, 0);
-        if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
+    private Action strafe() {
+        Pose2d beginPose = new Pose2d(108, 144, Math.toRadians(45));
             MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
-            Actions.runBlocking(
+            return
                     drive.actionBuilder(beginPose)
-                            .lineToY(-22)
-                            .build());
-        }
+//                            .lineToY(-22)
+//                            .lineToX(4)
+                            .strafeTo(new Vector2d(112, 122))
+                            .setTangent(Math.toRadians(45))
+                            .build()
+        ;
 
     }
 
-    private void moveAbit() {
-        Pose2d beginPose = new Pose2d(0, 0, 0);
-        if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
-            MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
-            Actions.runBlocking(
-                    drive.actionBuilder(beginPose)
-                            .lineToX(4)
-                            .build());
-        }
-    }
+
+
+
 
     @Override
     public void runOpMode () {
@@ -165,8 +251,16 @@ public class RoadrunnerAutohighbin extends LinearOpMode {
 
         Actions.runBlocking(
                 new SequentialAction(
+                        strafe(),
+                        armVertUp(),
                         liftUp(),
-                        liftDown()
+                        armUp(),
+                        outtake(),
+                        new SleepAction(2),
+                        stopIntake(),
+                        armVertDown(),
+                        liftDown(),
+                        armBack()
                 )
         );
     }

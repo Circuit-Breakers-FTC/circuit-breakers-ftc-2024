@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+
 @TeleOp
 public class DrivingV2 extends LinearOpMode {
     private DcMotor frontLeft;
@@ -15,10 +17,8 @@ public class DrivingV2 extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "backLeft");
         backLeft = hardwareMap.get(DcMotor.class, "frontRight");
         backRight = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
         frontRight.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+
         waitForStart();
         while (opModeIsActive()) {
             double x = gamepad1.left_stick_x; // Strafe left/right
@@ -38,7 +38,7 @@ public class DrivingV2 extends LinearOpMode {
                 frontLeftPower /= maxPower;
                 frontRightPower /= maxPower;
                 backLeftPower /= maxPower;
-                backRightPower /= maxPower
+                backRightPower /= maxPower;
             }
 
             // Set motor powers
