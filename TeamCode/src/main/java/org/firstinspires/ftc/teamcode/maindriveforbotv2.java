@@ -14,10 +14,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class maindriveforbotv2 extends LinearOpMode {
 
 
-    private DcMotor armRotate;
+
 
     //Set the motors
 
+    private DcMotor armRotate;
     private Servo openCloseClaw;
     private Servo rotateClaw;
     private Servo lowerClaw;
@@ -33,16 +34,20 @@ public class maindriveforbotv2 extends LinearOpMode {
 
     public static double CLAW_UP = 0.85;
     public static double CLAW_DOWN = 0.6;
-    public static double CLAW_OPEN = 0.65;
-    public static double CLAW_CLOSE = 0.0;
+    public static double CLAW_OPEN = 0.80;
+    public static double CLAW_CLOSE = 0.3;
     public static double CLAW_ONE = 0.5;
     public static double CLAW_TWO = 0.325;
     public static double CLAW_THREE = 0.15;
     public static double CLAW_FOUR = 0.675;
-    public static double SPECIMANCLAWCLOSE = 0.5;
+    public static double SPECIMANCLAWCLOSE = 0;
     public static double SPECIMANARMUP = 0;
+    public static int SPECIMANLIFTERMIDDLE = 1315;
+    public static int SPECIMANLIFTERUP = -1850;
+    public static int SPECIMANLIFTERDOWN = 0;
 
     //Function is Executed when OpMode is initiated
+
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -53,7 +58,7 @@ public class maindriveforbotv2 extends LinearOpMode {
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
+        frontLeft.setDirection(DcMotor.Direction.FORWARD);
         frontRight.setDirection(DcMotor.Direction.FORWARD);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
         backRight.setDirection(DcMotor.Direction.FORWARD);
@@ -68,13 +73,17 @@ public class maindriveforbotv2 extends LinearOpMode {
         //Set Speciman Arm Motors
 
         specimanLifter = hardwareMap.get(DcMotor.class,"specimanLifter");
+        specimanLifter.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        specimanLifter.setTargetPosition(0);
+        specimanLifter.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        specimanLifter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         specimanClaw = hardwareMap.get(Servo.class,"specimanClaw");
         specimanArm = hardwareMap.get(Servo.class, "specimanArm");
 
         waitForStart(); //Wait for Opmode Activation
 
         while (opModeIsActive()) {
-
+            telemetry.addData("height",specimanLifter.getCurrentPosition());
             telemetry.addData("lower.position", lowerClaw.getPosition());
             telemetry.update();
 
@@ -87,15 +96,15 @@ public class maindriveforbotv2 extends LinearOpMode {
                   telemetry.addLine("right bumper for fast mode!");
                 }
 
-                if (gamepad1.y) {
+                if (gamepad2.y) {
                     lowerClaw.setPosition(CLAW_UP);
                 }
 
-                if (gamepad1.a) {
+                if (gamepad2.a) {
                     lowerClaw.setPosition(CLAW_DOWN);
                 }
 
-                if (gamepad1.x) {
+                if (gamepad2.x) {
                     openCloseClaw.setPosition(CLAW_OPEN);
                 }
 
@@ -119,13 +128,30 @@ public class maindriveforbotv2 extends LinearOpMode {
                     rotateClaw.setPosition(CLAW_FOUR);
                 }
 
-                if (gamepad1.left_bumper) {
-                    specimanArm.setPosition(SPECIMANCLAWCLOSE);
+                if (gamepad1.a) {
+                    specimanArm.setPosition(SPECIMANARMUP);
                 }
 
-                if (gamepad1.right_bumper) {
-                    specimanClaw.setPosition(SPECIMANARMUP);
+                if (gamepad1.y) {
+                    specimanClaw.setPosition(SPECIMANCLAWCLOSE);
                 }
+
+                if (gamepad1.dpad_right) {
+                    specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
+                    specimanLifter.setPower(0);
+                }
+
+                if (gamepad1.dpad_down) {
+                    specimanLifter.setTargetPosition(SPECIMANLIFTERDOWN);
+                    specimanLifter.setPower(0);
+                }
+
+                if (gamepad1.dpad_up) {
+                    specimanLifter.setTargetPosition(SPECIMANLIFTERUP);
+                    specimanLifter.setPower(0);
+
+                }
+
 
                     //Driving Options
 
