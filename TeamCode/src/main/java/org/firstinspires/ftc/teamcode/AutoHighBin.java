@@ -14,7 +14,9 @@ public class AutoHighBin extends LinearOpMode {
     private DcMotor lift;
     private DcMotor armTurn;
     private CRServo intake;
-    private int SLEEP_TIME = 1000;
+    private int SLEEP_TIME = 500;
+    private int PAUSE_FOR_OUTAKE=2000;
+    private int SCORING_POSTION=-1490;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -42,21 +44,20 @@ public class AutoHighBin extends LinearOpMode {
         if (opModeIsActive()) {
             strafe();
             moveAbit();
-            extendArm();
+            scoringPosition();
             sleep(SLEEP_TIME);
             raiseLinearSlider();
             sleep(SLEEP_TIME);
             scoringPosition();
             sleep(SLEEP_TIME);
             scoreSample();
-            sleep(2000);
-            return1();
+            stopIntake();
             sleep(SLEEP_TIME);
-            return2();
+            armDown();
             sleep(SLEEP_TIME);
-            return3();
+            sliderDown();
             sleep(SLEEP_TIME);
-            return4();
+            armToStartingPosition();
             sleep(SLEEP_TIME);
 //            move(-0.25,2000);
 
@@ -64,35 +65,36 @@ public class AutoHighBin extends LinearOpMode {
         }
     }
 
-    private void extendArm() {
-        armTurn.setTargetPosition(-1490);
-        armTurn.setPower(0.5);
-    }
+//    private void extendArm() {
+//        armTurn.setTargetPosition(SCORING_POSTION);
+//        armTurn.setPower(0.5);
+//    }
 
     private void raiseLinearSlider() {
         lift.setTargetPosition(-1625);
         lift.setPower(0.5);
     }
     private void scoringPosition(){
-        armTurn.setTargetPosition(-1490);
+        armTurn.setTargetPosition(SCORING_POSTION);
         armTurn.setPower(0.5);
     }
 
     private void scoreSample(){
         intake.setPower(1);
+        sleep(PAUSE_FOR_OUTAKE);
     }
-    private void return1(){
+    private void stopIntake(){
         intake.setPower(0);
     }
-    private void return2(){
+    private void armDown(){
         armTurn.setTargetPosition(-1490);
         armTurn.setPower(0.5);
     }
-    private void return3(){
+    private void sliderDown(){
         lift.setTargetPosition(0);
         armTurn.setPower(0.5);
     }
-    private void return4(){
+    private void armToStartingPosition(){
         armTurn.setTargetPosition(0);
         armTurn.setPower(0.25);
     }
@@ -104,11 +106,7 @@ public class AutoHighBin extends LinearOpMode {
         frontRight.setPower(-0.5);
         backRight.setPower(0.5);
         sleep(1000);
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontRight.setPower(0);
-
+        stopMoving();
     }
 
     private void moveAbit (){
@@ -117,6 +115,10 @@ public class AutoHighBin extends LinearOpMode {
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
         sleep(220);
+        stopMoving();
+
+    }
+    private void stopMoving (){
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
