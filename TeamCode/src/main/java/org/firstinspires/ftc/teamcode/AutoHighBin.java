@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "RightAutonomous")
+@Autonomous(name = "AutoHighBin")
 public class AutoHighBin extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -14,7 +14,7 @@ public class AutoHighBin extends LinearOpMode {
     private DcMotor lift;
     private DcMotor armTurn;
     private CRServo intake;
-
+    private int SLEEP_TIME = 1000;
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -43,21 +43,21 @@ public class AutoHighBin extends LinearOpMode {
             strafe();
             moveAbit();
             extendArm();
-            sleep(2000);
+            sleep(SLEEP_TIME);
             raiseLinearSlider();
-            sleep(2000);
+            sleep(SLEEP_TIME);
             scoringPosition();
-            sleep(2000);
+            sleep(SLEEP_TIME);
             scoreSample();
             sleep(2000);
             return1();
-            sleep(2000);
+            sleep(SLEEP_TIME);
             return2();
-            sleep(2000);
+            sleep(SLEEP_TIME);
             return3();
-            sleep(2000);
+            sleep(SLEEP_TIME);
             return4();
-            sleep(2000);
+            sleep(SLEEP_TIME);
 //            move(-0.25,2000);
 
 
@@ -65,27 +65,27 @@ public class AutoHighBin extends LinearOpMode {
     }
 
     private void extendArm() {
-        armTurn.setTargetPosition(-890);
+        armTurn.setTargetPosition(-1490);
         armTurn.setPower(0.5);
     }
 
     private void raiseLinearSlider() {
-        lift.setTargetPosition(-1850);
+        lift.setTargetPosition(-1625);
         lift.setPower(0.5);
     }
     private void scoringPosition(){
-        armTurn.setTargetPosition(-1125);
+        armTurn.setTargetPosition(-1490);
         armTurn.setPower(0.5);
     }
 
     private void scoreSample(){
-        intake.setPower(0.5);
+        intake.setPower(1);
     }
     private void return1(){
         intake.setPower(0);
     }
     private void return2(){
-        armTurn.setTargetPosition(-890);
+        armTurn.setTargetPosition(-1490);
         armTurn.setPower(0.5);
     }
     private void return3(){
@@ -103,7 +103,7 @@ public class AutoHighBin extends LinearOpMode {
         backLeft.setPower(-0.5);
         frontRight.setPower(-0.5);
         backRight.setPower(0.5);
-        sleep(800);
+        sleep(1000);
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);

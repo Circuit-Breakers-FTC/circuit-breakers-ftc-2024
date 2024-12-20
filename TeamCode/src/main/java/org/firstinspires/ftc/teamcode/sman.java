@@ -5,11 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 //programmed by gabi and theo
-    @TeleOp(name = "MainDrive")
-    public class MainDriveServoTest extends LinearOpMode {
+    @TeleOp(name = "HogRider")
+    public class sman extends LinearOpMode {
+
+
 
         private DcMotor frontRight;
         private DcMotor frontLeft;
@@ -18,7 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
         private DcMotor lift;
         private DcMotor armTurn;
         private CRServo intake;
-        private Servo extendArm;
+     //   private Servo extendArm;
         private double ticksPerRotation;
 
 
@@ -44,12 +45,12 @@ import com.qualcomm.robotcore.hardware.Servo;
             armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             armTurn.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             intake = hardwareMap.get(CRServo.class, "intake");
-            extendArm = hardwareMap.get(Servo.class, "extendArm");
+       //     extendArm = hardwareMap.get(Servo.class, "extendArm");
             //     Initialization for NEW robot
             frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
             frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
 
-            extendArm.setPosition(0.4);
+    //        extendArm.setPosition(0.4);
 
             boolean isLaunched = false;
             boolean fastMode = false;
@@ -71,10 +72,10 @@ import com.qualcomm.robotcore.hardware.Servo;
                     lift.setTargetPosition(0);
                     lift.setPower(1);
                 } else if (gamepad2.b) {//high basket
-                    lift.setTargetPosition(-1825);
+                    lift.setTargetPosition(-1575);
                     lift.setPower(1);
                 } else if (gamepad2.y){//low basket
-                    lift.setTargetPosition(-1000);
+                    lift.setTargetPosition(-1500);
                     lift.setPower(1);
                 }
                 //Intake
@@ -82,7 +83,7 @@ import com.qualcomm.robotcore.hardware.Servo;
                     intake.setPower(0.25);
                     //push out
                 } else if (gamepad2.dpad_up) {
-                    intake.setPower(-0.5);
+                    intake.setPower(-1);
                     //suck in
                 } else if (gamepad2.dpad_left) {
                     intake.setPower(0);
@@ -91,41 +92,41 @@ import com.qualcomm.robotcore.hardware.Servo;
 
                 //Arm code
                 if (gamepad1.y) { //basket
-                    armTurn.setTargetPosition(-1000);
+                    armTurn.setTargetPosition(-690);
                     armTurn.setPower(0.5);
 
                 } else if (gamepad1.b) {//ground
-                    armTurn.setTargetPosition(-1880);
+                    armTurn.setTargetPosition(-1900);
                     armTurn.setPower(0.25);
                     //too low, changed it -6
                 } else if (gamepad1.x) {//drive
                     armTurn.setTargetPosition(-1650);
                     armTurn.setPower(0.5);
                 } else if (gamepad1.a) {//ground
-                    armTurn.setTargetPosition(-1900);
+                    armTurn.setTargetPosition(-1930);
                     armTurn.setPower(0.25);
 
 
                 }
-                if (gamepad1.dpad_up){
-                    frontLeft.setPower(1);
-                } else {
-                    frontLeft.setPower(0);
-                }
-                if (gamepad1.dpad_right){
-                    frontRight.setPower(1);
-                } else {
-                    frontRight.setPower(0);
-                }
-                if (gamepad1.dpad_left){
-                    backLeft.setPower(1);
-                } else {
-                    backLeft.setPower(0);
-                }if (gamepad1.dpad_down){
-                    backRight.setPower(1);
-                } else {
-                    backRight.setPower(0);
-                }
+//                if (gamepad1.dpad_up){
+//                    frontLeft.setPower(1);
+//                } else {
+//                    frontLeft.setPower(0);
+//                }
+//                if (gamepad1.dpad_up){
+//                    frontRight.setPower(1);
+//                } else {
+//                    frontRight.setPower(0);
+//                }
+//                if (gamepad1.dpad_left){
+//                    backLeft.setPower(1);
+//                } else {
+//                    backLeft.setPower(0);
+//                }if (gamepad1.dpad_down){
+//                    backRight.setPower(1);
+//                } else {
+//                    backRight.setPower(0);
+//                }
 
 
 
@@ -173,7 +174,7 @@ import com.qualcomm.robotcore.hardware.Servo;
                 telemetry.addData("armLift Current Position", armTurn.getCurrentPosition());
                 telemetry.addData("lift Current Position", lift.getCurrentPosition());
                 telemetry.addData("Target Position", lift.getTargetPosition());
-                telemetry.addData("Unfold Arm Current Position", extendArm.getPosition());
+      //          telemetry.addData("Unfold Arm Current Position", extendArm.getPosition());
                 telemetry.update();
 
             }
