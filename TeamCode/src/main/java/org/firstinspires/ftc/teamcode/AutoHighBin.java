@@ -14,9 +14,12 @@ public class AutoHighBin extends LinearOpMode {
     private DcMotor lift;
     private DcMotor armTurn;
     private CRServo intake;
-    private int SLEEP_TIME = 200;
+    private int SLEEP_TIME = 0;
     private int PAUSE_FOR_OUTAKE = 2000;
     private int PAUSE_FOR_ADJUSTMENT=220;
+    private int PAUSE_FOR_ARM_TO_SCORING=600;
+    private int PAUSE_FOR_ARM_RESET=900;
+    private int PAUSE_FOR_SLIDER_UP=900;
     private int ARM_POSTION_SCORING = -1490;
     private int ARM_POSTION_RESET = 0;
     private int LIFTER_POSTION_RESET = 0;
@@ -56,28 +59,23 @@ public class AutoHighBin extends LinearOpMode {
     private void sampleToHighBin() {
         strafe();
         moveAbit();
-        scoringPosition();
-        sleep(SLEEP_TIME);
         raiseLinearSlider();
-        sleep(SLEEP_TIME);
         scoringPosition();
-        sleep(SLEEP_TIME);
         scoreSample();
         stopIntake();
-        sleep(SLEEP_TIME);
         armDown();
-        sleep(SLEEP_TIME);
         sliderDown();
-        sleep(SLEEP_TIME);
         armToStartingPosition();
     }
     private void raiseLinearSlider() {
         lift.setTargetPosition(LIFTER_POSTION_UP);
         lift.setPower(0.5);
+        sleep(PAUSE_FOR_SLIDER_UP);
     }
     private void scoringPosition(){
         armTurn.setTargetPosition(ARM_POSTION_SCORING);
         armTurn.setPower(0.5);
+        sleep(PAUSE_FOR_ARM_TO_SCORING);
     }
 
     private void scoreSample(){
@@ -98,6 +96,7 @@ public class AutoHighBin extends LinearOpMode {
     private void armToStartingPosition(){
         armTurn.setTargetPosition(ARM_POSTION_RESET);
         armTurn.setPower(0.25);
+        sleep(PAUSE_FOR_ARM_RESET);
     }
 
 
