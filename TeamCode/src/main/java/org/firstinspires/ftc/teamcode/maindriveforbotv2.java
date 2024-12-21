@@ -40,11 +40,13 @@ public class maindriveforbotv2 extends LinearOpMode {
     public static double CLAW_TWO = 0.325;
     public static double CLAW_THREE = 0.15;
     public static double CLAW_FOUR = 0.675;
-    public static double SPECIMANCLAWCLOSE = 0;
-    public static double SPECIMANARMUP = 0;
-    public static int SPECIMANLIFTERMIDDLE = 1315;
+    public static double SPECIMANCLAWCLOSE = 0.5;
+    public static double SPECIMANCLAWOPEN = 0.2;
+    public static double SPECIMANARMUP = 0.85;
+    public static double SPECIMANARMDOWN = 0.2;
+    public static int SPECIMANLIFTERMIDDLE = -1315;
     public static int SPECIMANLIFTERUP = -1850;
-    public static int SPECIMANLIFTERDOWN = 0;
+    public static int SPECIMANLIFTERDOWN = -150;
 
     //Function is Executed when OpMode is initiated
 
@@ -84,73 +86,89 @@ public class maindriveforbotv2 extends LinearOpMode {
 
         while (opModeIsActive()) {
             telemetry.addData("height",specimanLifter.getCurrentPosition());
+            telemetry.addData("SpecimanArmAngle", specimanArm.getPosition());
+            telemetry.addData("SpecimanClawAngle",specimanClaw.getPosition());
             telemetry.addData("lower.position", lowerClaw.getPosition());
             telemetry.update();
 
             //Main Driving Options
-                boolean fastMode = false;
-                if (gamepad1.left_stick_button) {
-                    fastMode = true;
-                } else {
-                    fastMode = false;
-                  telemetry.addLine("right bumper for fast mode!");
-                }
+            boolean fastMode = false;
+            if (gamepad1.left_stick_button) {
+                fastMode = true;
+            } else {
+                fastMode = false;
+              telemetry.addLine("right bumper for fast mode!");
+            }
 
-                if (gamepad2.y) {
-                    lowerClaw.setPosition(CLAW_UP);
-                }
+            if (gamepad2.y) {
+                lowerClaw.setPosition(CLAW_UP);
+            }
 
-                if (gamepad2.a) {
-                    lowerClaw.setPosition(CLAW_DOWN);
-                }
+            if (gamepad2.a) {
+                lowerClaw.setPosition(CLAW_DOWN);
+            }
 
-                if (gamepad2.x) {
-                    openCloseClaw.setPosition(CLAW_OPEN);
-                }
+            if (gamepad2.x) {
+                openCloseClaw.setPosition(CLAW_OPEN);
+            }
 
-                if (gamepad2.b) {
-                    openCloseClaw.setPosition(CLAW_CLOSE);
-                }
+            if (gamepad2.b) {
+                openCloseClaw.setPosition(CLAW_CLOSE);
+            }
 
-                if (gamepad2.dpad_up) {
-                    rotateClaw.setPosition(CLAW_ONE);
-                }
+            if (gamepad2.dpad_up) {
+                rotateClaw.setPosition(CLAW_ONE);
+            }
 
-                if (gamepad2.dpad_right) {
-                    rotateClaw.setPosition(CLAW_TWO);
-                }
+            if (gamepad2.dpad_right) {
+                rotateClaw.setPosition(CLAW_TWO);
+            }
 
-                if (gamepad2.dpad_down) {
-                    rotateClaw.setPosition(CLAW_THREE);
-                }
+            if (gamepad2.dpad_down) {
+                rotateClaw.setPosition(CLAW_THREE);
+            }
 
-                if (gamepad2.dpad_left) {
-                    rotateClaw.setPosition(CLAW_FOUR);
-                }
+            if (gamepad2.dpad_left) {
+                rotateClaw.setPosition(CLAW_FOUR);
+            }
 
-                if (gamepad1.a) {
-                    specimanArm.setPosition(SPECIMANARMUP);
-                }
+            if (gamepad1.a) {
+                specimanArm.setPosition(SPECIMANARMUP);
+            }
 
-                if (gamepad1.y) {
-                    specimanClaw.setPosition(SPECIMANCLAWCLOSE);
-                }
+            if (gamepad1.b) {
+                specimanArm.setPosition(SPECIMANARMDOWN);
+            }
 
-                if (gamepad1.dpad_right) {
-                    specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
-                    specimanLifter.setPower(0);
-                }
+            if (gamepad1.y) {
+                specimanClaw.setPosition(SPECIMANCLAWCLOSE);
+            }
+            if (gamepad1.x) {
+                specimanClaw.setPosition(SPECIMANCLAWOPEN);
+            }
 
-                if (gamepad1.dpad_down) {
-                    specimanLifter.setTargetPosition(SPECIMANLIFTERDOWN);
-                    specimanLifter.setPower(0);
-                }
+            if (gamepad1.dpad_right) {
+                specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
+                specimanLifter.setPower(0.4);
+            }
 
-                if (gamepad1.dpad_up) {
-                    specimanLifter.setTargetPosition(SPECIMANLIFTERUP);
-                    specimanLifter.setPower(0);
+            if (gamepad1.dpad_down) {
+                specimanLifter.setTargetPosition(SPECIMANLIFTERDOWN);
+                specimanLifter.setPower(0.4);
+                specimanArm.setPosition(SPECIMANARMDOWN);
+                specimanClaw.setPosition(SPECIMANCLAWOPEN);
+            }
 
-                }
+            if (gamepad1.dpad_up) {
+                specimanLifter.setTargetPosition(SPECIMANLIFTERUP);
+                specimanLifter.setPower(0.4);
+            }
+            if (gamepad1.dpad_left) {
+                specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
+                specimanLifter.setPower(0.4);
+                specimanArm.setPosition(SPECIMANARMUP);
+            }
+
 
 
                     //Driving Options
