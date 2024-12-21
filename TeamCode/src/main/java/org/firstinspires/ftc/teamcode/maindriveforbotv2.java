@@ -183,7 +183,7 @@ public class maindriveforbotv2 extends LinearOpMode {
                     double frontRightPower = y - x - rotation;
                     double backLeftPower = y - x + rotation;
                     double backRightPower = y + x - rotation;
-                    double slowness = (.5);
+                    double slowness = (.3979676676897995);
 
                     //Set Motor Power Limits to 1
 
