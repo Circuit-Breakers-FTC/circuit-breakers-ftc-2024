@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -6,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 @Autonomous(name = "AutoHighBin")
+@Config
 public class AutoHighBin extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -15,16 +17,19 @@ public class AutoHighBin extends LinearOpMode {
     private DcMotor armTurn;
     private CRServo intake;
     private int SLEEP_TIME = 0;
-    private int PAUSE_FOR_OUTAKE = 2000;
-    private int PAUSE_FOR_ADJUSTMENT=220;
-    private int PAUSE_FOR_ARM_TO_SCORING=600;
-    private int PAUSE_FOR_ARM_RESET=900;
-    private int PAUSE_FOR_SLIDER_UP=900;
-    private int ARM_POSTION_SCORING = -1490;
-    private int ARM_POSTION_RESET = 0;
-    private int LIFTER_POSTION_RESET = 0;
-    private int LIFTER_POSTION_UP = -1625;
-
+    public static int PAUSE_FOR_OUTAKE = 2000;
+    public static int PAUSE_FOR_ADJUSTMENT=220;
+    public static int PAUSE_FOR_ARM_TO_SCORING=600;
+    public static int PAUSE_FOR_ARM_RESET=900;
+    public static int PAUSE_FOR_SLIDER_UP=900;
+    public static int ARM_POSTION_SCORING = -1490;
+    public static int ARM_POSTION_RESET = 0;
+    public static int LIFTER_POSTION_RESET = 0;
+    public static int LIFTER_POSTION_UP = -1625;
+    public static int GET_OFF_WALL = 300;
+    public static int DRIVE_TO_CHAMBER = 700;
+    public static int ARM_POSISION_CHAMBER = -1700;
+    public static int PULL_OFF_WALL = 100;
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -51,10 +56,73 @@ public class AutoHighBin extends LinearOpMode {
         waitForStart();
         runtime.reset();
         if (opModeIsActive()) {
-            sampleToHighBin();
+//            sampleToHighBin();
+            specimenToHighBar();
         }
     }
 
+    ///// AUTONOMOUS SPECIMEN //////
+
+    private void specimenToHighBar() {
+        // TODO: Write me!
+        moveOffWall();
+        armToChamber();
+        sleep(2000);
+        intakeToHoldSpecimen();
+        moveToChamber();
+        armOnChamber();
+        moveAwayFromChamber();
+        sleep(1000);
+        armToStartingPosition();
+
+
+
+    }
+
+
+    private void moveOffWall () {
+        frontLeft.setPower(0.5);
+        backLeft.setPower(0.5);
+        frontRight.setPower(0.5);
+        backRight.setPower(0.5);
+        sleep(GET_OFF_WALL);
+        stopMoving();
+    }
+
+    private void moveAwayFromChamber () {
+        frontLeft.setPower(-0.5);
+        backLeft.setPower(-0.5);
+        frontRight.setPower(-0.5);
+        backRight.setPower(-0.5);
+        sleep(GET_OFF_WALL);
+        stopMoving();
+    }
+
+    private void moveToChamber () {
+        frontLeft.setPower(0.2);
+        backLeft.setPower(0.2);
+        frontRight.setPower(0.2);
+        backRight.setPower(0.2);
+        sleep(DRIVE_TO_CHAMBER);
+        stopMoving();
+    }
+
+    private void armToChamber(){
+        armTurn.setTargetPosition(ARM_POSTION_SCORING);
+        armTurn.setPower(0.5);
+        sleep(PULL_OFF_WALL);
+    }
+
+    private void armOnChamber(){
+        armTurn.setTargetPosition(ARM_POSISION_CHAMBER);
+        armTurn.setPower(0.2);
+        sleep(PAUSE_FOR_ARM_TO_SCORING);
+    }
+    private void intakeToHoldSpecimen(){
+        intake.setPower(-0.5);
+    }
+
+    ///// AUTONOMOUS SAMPLE //////
 
     private void sampleToHighBin() {
         strafe();
@@ -109,6 +177,7 @@ public class AutoHighBin extends LinearOpMode {
         stopMoving();
     }
 
+
     private void moveAbit (){
         frontLeft.setPower(0.5);
         backLeft.setPower(0.5);
@@ -124,5 +193,10 @@ public class AutoHighBin extends LinearOpMode {
         backRight.setPower(0);
         frontRight.setPower(0);
 
+
     }
+
+
+
+
 }
