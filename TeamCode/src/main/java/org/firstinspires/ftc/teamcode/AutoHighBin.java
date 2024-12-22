@@ -18,18 +18,23 @@ public class AutoHighBin extends LinearOpMode {
     private CRServo intake;
     private int SLEEP_TIME = 0;
     public static int PAUSE_FOR_OUTAKE = 2000;
-    public static int PAUSE_FOR_ADJUSTMENT=220;
+    public static int PAUSE_FOR_ADJUSTMENT=250;
     public static int PAUSE_FOR_ARM_TO_SCORING=600;
     public static int PAUSE_FOR_ARM_RESET=900;
-    public static int PAUSE_FOR_SLIDER_UP=900;
+    public static int PAUSE_FOR_SLIDER_UP=1000;
     public static int ARM_POSTION_SCORING = -1490;
     public static int ARM_POSTION_RESET = 0;
     public static int LIFTER_POSTION_RESET = 0;
-    public static int LIFTER_POSTION_UP = -1625;
-    public static int GET_OFF_WALL = 300;
-    public static int DRIVE_TO_CHAMBER = 700;
+    public static int LIFTER_POSTION_UP = -1500;
+    public static int GET_OFF_WALL = 400;
+    public static int DRIVE_TO_CHAMBER = 300;
     public static int ARM_POSISION_CHAMBER = -1700;
     public static int PULL_OFF_WALL = 100;
+    public static int TURN_NINTY_DEGREES = 750;
+    public static int ARM_POSTION_ABOVE_CHAMBER = -1600;
+    public static double INTAKE_SPECIMEN = -0.2;
+
+
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -56,71 +61,10 @@ public class AutoHighBin extends LinearOpMode {
         waitForStart();
         runtime.reset();
         if (opModeIsActive()) {
-//            sampleToHighBin();
-            specimenToHighBar();
+            sampleToHighBin();
         }
     }
 
-    ///// AUTONOMOUS SPECIMEN //////
-
-    private void specimenToHighBar() {
-        // TODO: Write me!
-        moveOffWall();
-        armToChamber();
-        sleep(2000);
-        intakeToHoldSpecimen();
-        moveToChamber();
-        armOnChamber();
-        moveAwayFromChamber();
-        sleep(1000);
-        armToStartingPosition();
-
-
-
-    }
-
-
-    private void moveOffWall () {
-        frontLeft.setPower(0.5);
-        backLeft.setPower(0.5);
-        frontRight.setPower(0.5);
-        backRight.setPower(0.5);
-        sleep(GET_OFF_WALL);
-        stopMoving();
-    }
-
-    private void moveAwayFromChamber () {
-        frontLeft.setPower(-0.5);
-        backLeft.setPower(-0.5);
-        frontRight.setPower(-0.5);
-        backRight.setPower(-0.5);
-        sleep(GET_OFF_WALL);
-        stopMoving();
-    }
-
-    private void moveToChamber () {
-        frontLeft.setPower(0.2);
-        backLeft.setPower(0.2);
-        frontRight.setPower(0.2);
-        backRight.setPower(0.2);
-        sleep(DRIVE_TO_CHAMBER);
-        stopMoving();
-    }
-
-    private void armToChamber(){
-        armTurn.setTargetPosition(ARM_POSTION_SCORING);
-        armTurn.setPower(0.5);
-        sleep(PULL_OFF_WALL);
-    }
-
-    private void armOnChamber(){
-        armTurn.setTargetPosition(ARM_POSISION_CHAMBER);
-        armTurn.setPower(0.2);
-        sleep(PAUSE_FOR_ARM_TO_SCORING);
-    }
-    private void intakeToHoldSpecimen(){
-        intake.setPower(-0.5);
-    }
 
     ///// AUTONOMOUS SAMPLE //////
 
