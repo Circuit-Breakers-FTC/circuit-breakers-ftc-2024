@@ -40,13 +40,15 @@ public class maindriveforbotv2 extends LinearOpMode {
     public static double CLAW_TWO = 0.325;
     public static double CLAW_THREE = 0.15;
     public static double CLAW_FOUR = 0.675;
-    public static double SPECIMANCLAWCLOSE = 0.5;
+    public static double SPECIMANCLAWCLOSE = 0.485;
     public static double SPECIMANCLAWOPEN = 0.2;
     public static double SPECIMANARMUP = 0.85;
     public static double SPECIMANARMDOWN = 0.2;
     public static int SPECIMANLIFTERMIDDLE = -1315;
     public static int SPECIMANLIFTERUP = -1850;
     public static int SPECIMANLIFTERDOWN = -150;
+    public static int SAMPLEARMRESTING = 0;
+    public static int SAMPLEARMOUT = 1000;
 
     //Function is Executed when OpMode is initiated
 
@@ -83,21 +85,20 @@ public class maindriveforbotv2 extends LinearOpMode {
         specimanArm = hardwareMap.get(Servo.class, "specimanArm");
 
         waitForStart(); //Wait for Opmode Activation
-
         while (opModeIsActive()) {
             telemetry.addData("height",specimanLifter.getCurrentPosition());
-            telemetry.addData("SpecimanArmAngle", specimanArm.getPosition());
-            telemetry.addData("SpecimanClawAngle",specimanClaw.getPosition());
+            telemetry.addData("SpecimanArmAngle:", specimanArm.getPosition());
+            telemetry.addData("SpecimanClawAngle:",specimanClaw.getPosition());
+            telemetry.addData("SampleArmAngle:", armRotate.getCurrentPosition());
             telemetry.addData("lower.position", lowerClaw.getPosition());
             telemetry.update();
 
             //Main Driving Options
             boolean fastMode = false;
-            if (gamepad1.left_stick_button) {
+            if (gamepad1.left_trigger > 0.5) {
                 fastMode = true;
             } else {
-                fastMode = false;
-              telemetry.addLine("right bumper for fast mode!");
+                telemetry.addLine("left_trigger for fast mode!");
             }
 
             if (gamepad2.y) {
@@ -132,6 +133,16 @@ public class maindriveforbotv2 extends LinearOpMode {
                 rotateClaw.setPosition(CLAW_FOUR);
             }
 
+            if (gamepad2.left_bumper) {
+                armRotate.setTargetPosition(SAMPLEARMRESTING);
+                armRotate.setPower(0.4);
+            }
+
+            if (gamepad2.right_bumper) {
+                armRotate.setTargetPosition(SAMPLEARMOUT);
+                armRotate.setPower(0.4);
+            }
+
             if (gamepad1.a) {
                 specimanArm.setPosition(SPECIMANARMUP);
             }
@@ -152,18 +163,18 @@ public class maindriveforbotv2 extends LinearOpMode {
                 specimanLifter.setPower(0.4);
             }
 
-            if (gamepad1.dpad_down) {
+            if (gamepad1.left_bumper) {
                 specimanLifter.setTargetPosition(SPECIMANLIFTERDOWN);
                 specimanLifter.setPower(0.4);
                 specimanArm.setPosition(SPECIMANARMDOWN);
                 specimanClaw.setPosition(SPECIMANCLAWOPEN);
             }
 
-            if (gamepad1.dpad_up) {
+            if (gamepad1.right_bumper) {
                 specimanLifter.setTargetPosition(SPECIMANLIFTERUP);
                 specimanLifter.setPower(0.4);
             }
-            if (gamepad1.dpad_left) {
+            if (gamepad1.right_trigger > 0.5) {
                 specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
                 specimanLifter.setPower(0.4);
                 specimanArm.setPosition(SPECIMANARMUP);
@@ -171,44 +182,44 @@ public class maindriveforbotv2 extends LinearOpMode {
 
 
 
-                    //Driving Options
+            //Driving Options
 
-                    double x = gamepad1.left_stick_x; // Strafe left/right
-                    double y = -gamepad1.left_stick_y; // Forward/backward
-                    double rotation = gamepad1.right_stick_x; // Rotate
+            double x = gamepad1.left_stick_x; // Strafe left/right
+            double y = -gamepad1.left_stick_y; // Forward/backward
+            double rotation = gamepad1.right_stick_x; // Rotate
 
-                    // Calculate motor powers
+            // Calculate motor powers
 
-                    double frontLeftPower = y + x + rotation;
-                    double frontRightPower = y - x - rotation;
-                    double backLeftPower = y - x + rotation;
-                    double backRightPower = y + x - rotation;
-                    double slowness = (.3979676676897995);
+            double frontLeftPower = y + x + rotation;
+            double frontRightPower = y - x - rotation;
+            double backLeftPower = y - x + rotation;
+            double backRightPower = y + x - rotation;
+            double slowness = (.3979676676897995);
 
-                    //Set Motor Power Limits to 1
+            //Set Motor Power Limits to 1
 
-                    double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
-                            Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+            double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
+                    Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
 
-                    if (maxPower > 1.0) {
-                        frontLeftPower /= maxPower;
-                        frontRightPower /= maxPower;
-                        backLeftPower /= maxPower;
-                        backRightPower /= maxPower;
-                    }
-
-                    if (fastMode) {
-                        slowness = 1.0;
-                    }
-
-                    // Set motor powers
-
-                    frontLeft.setPower(frontLeftPower * slowness);
-                    frontRight.setPower(frontRightPower * slowness);
-                    backLeft.setPower(backLeftPower * slowness);
-                    backRight.setPower(backRightPower * slowness);
-
-
+            if (maxPower > 1.0) {
+                frontLeftPower /= maxPower;
+                frontRightPower /= maxPower;
+                backLeftPower /= maxPower;
+                backRightPower /= maxPower;
             }
+
+            if (fastMode) {
+                slowness = 1.0;
+            }
+
+            // Set motor powers
+
+            frontLeft.setPower(frontLeftPower * slowness);
+            frontRight.setPower(frontRightPower * slowness);
+            backLeft.setPower(backLeftPower * slowness);
+            backRight.setPower(backRightPower * slowness);
+
+
         }
     }
+}
