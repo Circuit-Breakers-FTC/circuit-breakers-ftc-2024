@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "RightAutonomous")
+@Autonomous(name = "AutoHighBin")
+@Config
 public class AutoHighBin extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
@@ -14,6 +16,25 @@ public class AutoHighBin extends LinearOpMode {
     private DcMotor lift;
     private DcMotor armTurn;
     private CRServo intake;
+    private int SLEEP_TIME = 0;
+    public static int PAUSE_FOR_OUTAKE = 2000;
+    public static int PAUSE_FOR_ADJUSTMENT=250;
+    public static int PAUSE_FOR_ARM_TO_SCORING=600;
+    public static int PAUSE_FOR_ARM_RESET=900;
+    public static int PAUSE_FOR_SLIDER_UP=1000;
+    public static int ARM_POSTION_SCORING = -1490;
+    public static int ARM_POSTION_RESET = 0;
+    public static int LIFTER_POSTION_RESET = 0;
+    public static int LIFTER_POSTION_UP = -1500;
+    public static int GET_OFF_WALL = 400;
+    public static int DRIVE_TO_CHAMBER = 300;
+    public static int ARM_POSISION_CHAMBER = -1700;
+    public static int PULL_OFF_WALL = 100;
+    public static int TURN_NINTY_DEGREES = 750;
+    public static int ARM_POSTION_ABOVE_CHAMBER = -1600;
+    public static double INTAKE_SPECIMEN = -0.2;
+
+
 
     private ElapsedTime runtime = new ElapsedTime();
 
@@ -40,61 +61,54 @@ public class AutoHighBin extends LinearOpMode {
         waitForStart();
         runtime.reset();
         if (opModeIsActive()) {
-            strafe();
-            moveAbit();
-            extendArm();
-            sleep(2000);
-            raiseLinearSlider();
-            sleep(2000);
-            scoringPosition();
-            sleep(2000);
-            scoreSample();
-            sleep(2000);
-            return1();
-            sleep(2000);
-            return2();
-            sleep(2000);
-            return3();
-            sleep(2000);
-            return4();
-            sleep(2000);
-//            move(-0.25,2000);
-
-
+            sampleToHighBin();
         }
     }
 
-    private void extendArm() {
-        armTurn.setTargetPosition(-890);
-        armTurn.setPower(0.5);
-    }
 
+    ///// AUTONOMOUS SAMPLE //////
+
+    private void sampleToHighBin() {
+        strafe();
+        moveAbit();
+        raiseLinearSlider();
+        scoringPosition();
+        scoreSample();
+        stopIntake();
+        armDown();
+        sliderDown();
+        armToStartingPosition();
+    }
     private void raiseLinearSlider() {
-        lift.setTargetPosition(-1850);
+        lift.setTargetPosition(LIFTER_POSTION_UP);
         lift.setPower(0.5);
+        sleep(PAUSE_FOR_SLIDER_UP);
     }
     private void scoringPosition(){
-        armTurn.setTargetPosition(-1125);
+        armTurn.setTargetPosition(ARM_POSTION_SCORING);
         armTurn.setPower(0.5);
+        sleep(PAUSE_FOR_ARM_TO_SCORING);
     }
 
     private void scoreSample(){
-        intake.setPower(0.5);
+        intake.setPower(1);
+        sleep(PAUSE_FOR_OUTAKE);
     }
-    private void return1(){
+    private void stopIntake(){
         intake.setPower(0);
     }
-    private void return2(){
-        armTurn.setTargetPosition(-890);
+    private void armDown(){
+        armTurn.setTargetPosition(ARM_POSTION_SCORING);
         armTurn.setPower(0.5);
     }
-    private void return3(){
-        lift.setTargetPosition(0);
+    private void sliderDown(){
+        lift.setTargetPosition(LIFTER_POSTION_RESET);
         armTurn.setPower(0.5);
     }
-    private void return4(){
-        armTurn.setTargetPosition(0);
+    private void armToStartingPosition(){
+        armTurn.setTargetPosition(ARM_POSTION_RESET);
         armTurn.setPower(0.25);
+        sleep(PAUSE_FOR_ARM_RESET);
     }
 
 
@@ -103,24 +117,30 @@ public class AutoHighBin extends LinearOpMode {
         backLeft.setPower(-0.5);
         frontRight.setPower(-0.5);
         backRight.setPower(0.5);
-        sleep(800);
-        frontLeft.setPower(0);
-        backLeft.setPower(0);
-        backRight.setPower(0);
-        frontRight.setPower(0);
-
+        sleep(1000);
+        stopMoving();
     }
+
 
     private void moveAbit (){
         frontLeft.setPower(0.5);
         backLeft.setPower(0.5);
         frontRight.setPower(0.5);
         backRight.setPower(0.5);
-        sleep(220);
+        sleep(PAUSE_FOR_ADJUSTMENT);
+        stopMoving();
+
+    }
+    private void stopMoving (){
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
         frontRight.setPower(0);
 
+
     }
+
+
+
+
 }
