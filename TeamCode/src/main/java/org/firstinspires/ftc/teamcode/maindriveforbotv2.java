@@ -32,9 +32,9 @@ public class maindriveforbotv2 extends LinearOpMode {
 
     //Changable Variables
 
-    public static double CLAW_UP = 0.85;
-    public static double CLAW_DOWN = 0.6;
-    public static double CLAW_OPEN = 0.80;
+    public static double CLAW_UP = 0.5;
+    public static double CLAW_DOWN = 0.12;
+    public static double CLAW_OPEN = 0.70;
     public static double CLAW_CLOSE = 0.3;
     public static double CLAW_ONE = 0.5;
     public static double CLAW_TWO = 0.325;
@@ -48,8 +48,8 @@ public class maindriveforbotv2 extends LinearOpMode {
     public static int SPECIMANLIFTERUP = -1850;
     public static int SPECIMANLIFTERDOWN = -150;
     public static int SAMPLEARMRESTING = 0;
-    public static int SAMPLEARMOUT = 1000;
-
+    public static int SAMPLEARMOUT = -890;
+    public static double GAMEPAD_2_SPEED = 0.25;
     //Function is Executed when OpMode is initiated
 
 
@@ -73,6 +73,10 @@ public class maindriveforbotv2 extends LinearOpMode {
         rotateClaw = hardwareMap.get(Servo.class, "rotateClaw");
         lowerClaw = hardwareMap.get(Servo.class, "lowerClaw");
         armRotate = hardwareMap.get(DcMotor.class, "armRotate");
+        armRotate.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armRotate.setTargetPosition(0);
+        armRotate.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        armRotate.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //Set Speciman Arm Motors
 
@@ -84,14 +88,18 @@ public class maindriveforbotv2 extends LinearOpMode {
         specimanClaw = hardwareMap.get(Servo.class,"specimanClaw");
         specimanArm = hardwareMap.get(Servo.class, "specimanArm");
 
+        specimanClaw.setPosition(SPECIMANCLAWCLOSE);
+        rotateClaw.setPosition(CLAW_ONE);
+        lowerClaw.setPosition(CLAW_DOWN);
+        openCloseClaw.setPosition(CLAW_CLOSE);
         waitForStart(); //Wait for Opmode Activation
         while (opModeIsActive()) {
             telemetry.addData("height",specimanLifter.getCurrentPosition());
             telemetry.addData("SpecimanArmAngle:", specimanArm.getPosition());
             telemetry.addData("SpecimanClawAngle:",specimanClaw.getPosition());
             telemetry.addData("SampleArmAngle:", armRotate.getCurrentPosition());
+            telemetry.addData("SampleArm Target Angle:", armRotate.getTargetPosition());
             telemetry.addData("lower.position", lowerClaw.getPosition());
-            telemetry.update();
 
             //Main Driving Options
             boolean fastMode = false;
@@ -133,14 +141,17 @@ public class maindriveforbotv2 extends LinearOpMode {
                 rotateClaw.setPosition(CLAW_FOUR);
             }
 
-            if (gamepad2.left_bumper) {
+            if (gamepad2.right_bumper) {
                 armRotate.setTargetPosition(SAMPLEARMRESTING);
                 armRotate.setPower(0.4);
             }
 
-            if (gamepad2.right_bumper) {
+            if (gamepad2.left_bumper) {
                 armRotate.setTargetPosition(SAMPLEARMOUT);
                 armRotate.setPower(0.4);
+                lowerClaw.setPosition(CLAW_UP);
+                openCloseClaw.setPosition(CLAW_OPEN);
+                rotateClaw.setPosition(CLAW_ONE);
             }
 
             if (gamepad1.a) {
@@ -184,9 +195,9 @@ public class maindriveforbotv2 extends LinearOpMode {
 
             //Driving Options
 
-            double x = gamepad1.left_stick_x; // Strafe left/right
-            double y = -gamepad1.left_stick_y; // Forward/backward
-            double rotation = gamepad1.right_stick_x; // Rotate
+            double x = gamepad1.left_stick_x+GAMEPAD_2_SPEED*gamepad2.left_stick_x; // Strafe left/right
+            double y = -gamepad1.left_stick_y-GAMEPAD_2_SPEED*gamepad2.left_stick_y; // Forward/backward
+            double rotation = gamepad1.right_stick_x+GAMEPAD_2_SPEED*gamepad2.right_stick_x; // Rotate
 
             // Calculate motor powers
 
@@ -218,6 +229,7 @@ public class maindriveforbotv2 extends LinearOpMode {
             frontRight.setPower(frontRightPower * slowness);
             backLeft.setPower(backLeftPower * slowness);
             backRight.setPower(backRightPower * slowness);
+            telemetry.update();
 
 
         }
