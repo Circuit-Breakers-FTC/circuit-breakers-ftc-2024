@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -22,6 +23,8 @@ public class MainDrive extends LinearOpMode {
     private Servo extendArm;
     private double ticksPerRotation;
 
+    RevBlinkinLedDriver blinkinLedDriver;
+    RevBlinkinLedDriver.BlinkinPattern pattern;
 
     static final double COUNTS_PER_MOTOR_REV = 537.6;    // eg: TETRIX Motor Encoder
 
@@ -30,6 +33,7 @@ public class MainDrive extends LinearOpMode {
      */
     @Override
     public void runOpMode() {
+        blinkinLedDriver = hardwareMap.get(RevBlinkinLedDriver.class, "blinkin");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         backRight = hardwareMap.get(DcMotor.class, "backRight");
@@ -49,7 +53,6 @@ public class MainDrive extends LinearOpMode {
         //     Initialization for NEW robot
         frontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         frontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-
         extendArm.setPosition(0.4);
 
         boolean isLaunched = false;
@@ -81,15 +84,37 @@ public class MainDrive extends LinearOpMode {
                 //Intake
             if (gamepad2.dpad_down) {
                 intake.setPower(0.25);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                blinkinLedDriver.setPattern(pattern);
                 //push out
-            } else if (gamepad2.dpad_up) {
-                intake.setPower(-0.5);
-                //suck in
-            } else if (gamepad2.dpad_left) {
-                intake.setPower(0);
-                //stop
             }
 
+            if (gamepad2.dpad_up) {
+                intake.setPower(-0.5);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                blinkinLedDriver.setPattern(pattern);
+                //suck in
+            }
+
+            if (gamepad2.dpad_left) {
+                intake.setPower(0);
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                blinkinLedDriver.setPattern(pattern);
+                //stop
+            }
+            if(gamepad1.x){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.BLUE;
+                blinkinLedDriver.setPattern(pattern);
+            }
+
+            if(gamepad1.y){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+                blinkinLedDriver.setPattern(pattern);
+            }
+
+            if (gamepad1.b){
+                pattern = RevBlinkinLedDriver.BlinkinPattern.RED;
+                blinkinLedDriver.setPattern(pattern);
                 //Arm code
             if (gamepad1.y) { //basket
                 armTurn.setTargetPosition(-1490);
