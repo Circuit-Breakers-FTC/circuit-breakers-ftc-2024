@@ -18,21 +18,26 @@ public class AutoHighBin extends LinearOpMode {
     private CRServo intake;
     private int SLEEP_TIME = 0;
     public static int PAUSE_FOR_OUTAKE = 2000;
-    public static int PAUSE_FOR_ADJUSTMENT=250;
+    public static int PAUSE_FOR_ADJUSTMENT=280;
+    public static double PAUSE_FOR_ADJUSTMENT_POWER=0.5;
     public static int PAUSE_FOR_ARM_TO_SCORING=600;
     public static int PAUSE_FOR_ARM_RESET=900;
     public static int PAUSE_FOR_SLIDER_UP=1000;
     public static int ARM_POSTION_SCORING = -1490;
     public static int ARM_POSTION_RESET = 0;
     public static int LIFTER_POSTION_RESET = 0;
-    public static int LIFTER_POSTION_UP = -1500;
-    public static int GET_OFF_WALL = 400;
-    public static int DRIVE_TO_CHAMBER = 300;
-    public static int ARM_POSISION_CHAMBER = -1700;
-    public static int PULL_OFF_WALL = 100;
-    public static int TURN_NINTY_DEGREES = 750;
-    public static int ARM_POSTION_ABOVE_CHAMBER = -1600;
-    public static double INTAKE_SPECIMEN = -0.2;
+    public static int LIFTER_POSTION_UP = -1550;
+    public static int DRIVE_AWAY_FROM_BASKET = 1800;
+    public static double DRIVE_AWAY_FROM_BASKET_POWER = -0.3;
+    public static int USE_CAMERA = 1300;
+    public static int ARM_POSTION_ALMOST_GROUND = -2740;
+    public static int ARM_POSTION_GROUND = -2760;
+    public static int STRAFE_TO_SAMPLE = 1700;
+    public static double INTAKE_SAMPLE = -1;
+    public static double DRIVE_TO_SAMPLE_POWER = 0.3;
+    public static int DRIVE_TO_SAMPLE = 500;
+
+
 
 
 
@@ -69,7 +74,7 @@ public class AutoHighBin extends LinearOpMode {
     ///// AUTONOMOUS SAMPLE //////
 
     private void sampleToHighBin() {
-        strafe();
+        strafeOffWall();
         moveAbit();
         raiseLinearSlider();
         scoringPosition();
@@ -78,6 +83,31 @@ public class AutoHighBin extends LinearOpMode {
         armDown();
         sliderDown();
         armToStartingPosition();
+        moveAwayFromBasket();
+        useCameraJK();
+        strafeToSample();
+        armToAlmostGround();
+        intakeIn();
+        driveToSample();
+        stopMoving();
+        armToGround();
+        scoringPosition();
+        driveAwayFromSample();
+        strafeAwayFromSample();
+        turnToBasket();
+        raiseLinearSlider();
+        moveToBasket();
+        scoreSample();
+        sleep(500);
+        stopIntake();
+        moveABitBack();
+        armDown();
+        sliderDown();
+        armToStartingPosition();
+
+
+
+
     }
     private void raiseLinearSlider() {
         lift.setTargetPosition(LIFTER_POSTION_UP);
@@ -112,7 +142,7 @@ public class AutoHighBin extends LinearOpMode {
     }
 
 
-    private void strafe (){
+    private void strafeOffWall (){
         frontLeft.setPower(0.5);
         backLeft.setPower(-0.5);
         frontRight.setPower(-0.5);
@@ -123,20 +153,99 @@ public class AutoHighBin extends LinearOpMode {
 
 
     private void moveAbit (){
-        frontLeft.setPower(0.5);
-        backLeft.setPower(0.5);
-        frontRight.setPower(0.5);
-        backRight.setPower(0.5);
-        sleep(PAUSE_FOR_ADJUSTMENT);
-        stopMoving();
 
+        setPowerAndSleep(PAUSE_FOR_ADJUSTMENT_POWER, PAUSE_FOR_ADJUSTMENT);
+        stopMoving();
     }
     private void stopMoving (){
         frontLeft.setPower(0);
         backLeft.setPower(0);
         backRight.setPower(0);
         frontRight.setPower(0);
+    }
 
+    private void moveAwayFromBasket() {
+        setPowerAndSleep(DRIVE_AWAY_FROM_BASKET_POWER, DRIVE_AWAY_FROM_BASKET);
+
+    }
+
+    private void useCameraJK () {
+        frontLeft.setPower(0.2);
+        backLeft.setPower(0.2);
+        frontRight.setPower(-0.2);
+        backRight.setPower(-0.2);
+        sleep(USE_CAMERA);
+
+    }
+
+    private void setPowerAndSleep(double power, int sleep_dur) {
+        frontLeft.setPower(power);
+        backLeft.setPower(power);
+        backRight.setPower(power);
+        frontRight.setPower(power);
+        sleep(sleep_dur);
+    }
+
+    private  void armToGround(){
+        armTurn.setTargetPosition(ARM_POSTION_GROUND);
+        armTurn.setPower(1);
+        sleep(1000);
+    }
+
+    private  void armToAlmostGround(){
+        armTurn.setTargetPosition(ARM_POSTION_ALMOST_GROUND);
+        armTurn.setPower(0.5);
+        sleep(3000);
+    }
+
+    private void strafeToSample(){
+        frontLeft.setPower(0.3);
+        backLeft.setPower(-0.3);
+        frontRight.setPower(-0.3);
+        backRight.setPower(0.3);
+        sleep(STRAFE_TO_SAMPLE);
+        stopMoving();
+    }
+
+    private void intakeIn() {
+        intake.setPower(INTAKE_SAMPLE);
+    sleep(500);
+    }
+
+    private void driveToSample() {
+        setPowerAndSleep(DRIVE_TO_SAMPLE_POWER, DRIVE_TO_SAMPLE);
+    }
+
+    private void driveAwayFromSample() {
+        setPowerAndSleep(-DRIVE_TO_SAMPLE_POWER, DRIVE_TO_SAMPLE);
+
+    }
+
+    private void strafeAwayFromSample(){
+        frontLeft.setPower(-0.3);
+        backLeft.setPower(0.3);
+        frontRight.setPower(0.3);
+        backRight.setPower(-0.3);
+        sleep(STRAFE_TO_SAMPLE);
+        stopMoving();
+    }
+
+    private void turnToBasket () {
+        frontLeft.setPower(-0.2);
+        backLeft.setPower(-0.2);
+        frontRight.setPower(0.2);
+        backRight.setPower(0.2);
+        sleep(USE_CAMERA-900);
+
+    }
+
+    private void moveToBasket() {
+        setPowerAndSleep(-DRIVE_AWAY_FROM_BASKET_POWER, DRIVE_AWAY_FROM_BASKET);
+
+    }
+
+    private void moveABitBack() {
+        setPowerAndSleep(-0.3, 1000);
 
     }
 
