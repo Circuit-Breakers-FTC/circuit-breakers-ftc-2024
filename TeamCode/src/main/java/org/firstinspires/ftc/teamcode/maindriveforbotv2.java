@@ -103,10 +103,10 @@ public class maindriveforbotv2 extends LinearOpMode {
 
             //Main Driving Options
             boolean fastMode = false;
-            if (gamepad1.left_trigger > 0.5) {
+            if (gamepad1.left_stick_button) {
                 fastMode = true;
             } else {
-                telemetry.addLine("left_trigger for fast mode!");
+                telemetry.addLine("Left stick button for fast mode");
             }
 
             if (gamepad2.y) {
@@ -169,23 +169,23 @@ public class maindriveforbotv2 extends LinearOpMode {
                 specimanClaw.setPosition(SPECIMANCLAWOPEN);
             }
 
-            if (gamepad1.dpad_right) {
-                specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
-                specimanLifter.setPower(0.4);
-            }
+            //if (gamepad1.dpad_right) {
+              //  specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
+                //specimanLifter.setPower(0.4);
+            //}
 
-            if (gamepad1.left_bumper) {
+            if (gamepad1.dpad_down) {
                 specimanLifter.setTargetPosition(SPECIMANLIFTERDOWN);
                 specimanLifter.setPower(0.4);
                 specimanArm.setPosition(SPECIMANARMDOWN);
                 specimanClaw.setPosition(SPECIMANCLAWOPEN);
             }
 
-            if (gamepad1.right_bumper) {
+            if (gamepad1.dpad_up) {
                 specimanLifter.setTargetPosition(SPECIMANLIFTERUP);
                 specimanLifter.setPower(0.4);
             }
-            if (gamepad1.right_trigger > 0.5) {
+            if (gamepad1.dpad_right) {
                 specimanLifter.setTargetPosition(SPECIMANLIFTERMIDDLE);
                 specimanLifter.setPower(0.4);
                 specimanArm.setPosition(SPECIMANARMUP);
