@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
-@Autonomous(name = "AutoHighBin")
+@Autonomous(name = "AutoHighBinOneSample")
 @Config
-public class AutoHighBin extends LinearOpMode {
+public class AutoHighBinOneSample extends LinearOpMode {
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -32,7 +32,7 @@ public class AutoHighBin extends LinearOpMode {
     public static int USE_CAMERA = 1200;
     public static int ARM_POSTION_ALMOST_GROUND = -2725;
     public static int ARM_POSTION_GROUND = -2760;
-    public static int STRAFE_TO_SAMPLE = 1000;
+    public static int STRAFE_TO_SAMPLE = 600;
     public static double INTAKE_SAMPLE = -1;
     public static double DRIVE_TO_SAMPLE_POWER = 0.3;
     public static int DRIVE_TO_SAMPLE = 500;
@@ -83,29 +83,26 @@ public class AutoHighBin extends LinearOpMode {
         armDown();
         sliderDown();
         armToStartingPosition();
-        moveAwayFromBasket();
-        useCameraJK();
-        strafeToSample();
-        armToAlmostGround();
-        intakeIn();
-        driveToSample();
-        stopMoving();
-        armToGround();
-        scoringPosition();
-        driveAwayFromSample();
-        strafeAwayFromSample();
-        turnToBasket();
-        raiseLinearSlider();
-        moveToBasket();
-        stopMoving();
-        scoreSample();
-        stopIntake();
-        sliderDown();
-        armToStartingPosition();
-        moveABitBack();
-        sleep(1000);
-
-
+//        moveAwayFromBasket();
+//        useCameraJK();
+//        strafeToSample();
+//        armToAlmostGround();
+//        intakeIn();
+//        driveToSample();
+//        stopMoving();
+//        armToGround();
+//        scoringPosition();
+//        driveAwayFromSample();
+//        strafeAwayFromSample();
+//        turnToBasket();
+//        raiseLinearSlider();
+//        moveToBasket();
+//        scoreSample();
+//        stopIntake();
+//        moveABitBack();
+//        armDown();
+//        sliderDown();
+//        armToStartingPosition();
 
 
 
@@ -165,17 +162,16 @@ public class AutoHighBin extends LinearOpMode {
         frontRight.setPower(0);
     }
 
-
     private void moveAwayFromBasket() {
         setPowerAndSleep(DRIVE_AWAY_FROM_BASKET_POWER, DRIVE_AWAY_FROM_BASKET);
 
     }
 
     private void useCameraJK () {
-        frontLeft.setPower(0.25);
-        backLeft.setPower(0.25);
-        frontRight.setPower(-0.25);
-        backRight.setPower(-0.25);
+        frontLeft.setPower(0.2);
+        backLeft.setPower(0.2);
+        frontRight.setPower(-0.2);
+        backRight.setPower(-0.2);
         sleep(USE_CAMERA);
 
     }
@@ -211,7 +207,7 @@ public class AutoHighBin extends LinearOpMode {
 
     private void intakeIn() {
         intake.setPower(INTAKE_SAMPLE);
-    sleep(500);
+        sleep(500);
     }
 
     private void driveToSample() {
@@ -247,7 +243,7 @@ public class AutoHighBin extends LinearOpMode {
     }
 
     private void moveABitBack() {
-        setPowerAndSleep(-0.3, 5100);
+        setPowerAndSleep(0.3, 800);
 
     }
 

@@ -22,7 +22,7 @@ public class AutoSpecimen extends LinearOpMode {
     public static int ARM_POSTION_RESET = 0;
     public static int GET_OFF_WALL = 400;
     public static int DRIVE_TO_CHAMBER = 300;
-    public static int ARM_POSISION_CHAMBER = -1700;
+    public static int ARM_POSISION_CHAMBER = -1750;
     public static int PULL_OFF_WALL = 100;
     public static int TURN_NINTY_DEGREES = 750;
     public static int ARM_POSTION_ABOVE_CHAMBER = -1600;
@@ -74,6 +74,8 @@ public class AutoSpecimen extends LinearOpMode {
         armToStartingPosition();
         sleep(1000);
         moveToPark();
+        backup();
+        stopMoving();
 
 
     }
@@ -160,6 +162,14 @@ public class AutoSpecimen extends LinearOpMode {
         backLeft.setPower(0);
         backRight.setPower(0);
         frontRight.setPower(0);
+    }
+
+    private void backup() {
+        frontLeft.setPower(-0.1);
+        backLeft.setPower(-0.1);
+        backRight.setPower(-0.1);
+        frontRight.setPower(-0.1);
+        sleep(2000);
     }
 
 
