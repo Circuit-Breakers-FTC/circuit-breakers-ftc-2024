@@ -56,8 +56,7 @@ public class maindriveforbotv2 extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
 
-        //Set Drive Motors
-
+        //Set Drive Motor
         frontLeft = hardwareMap.get(DcMotor.class, "frontLeft");
         frontRight = hardwareMap.get(DcMotor.class, "frontRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
