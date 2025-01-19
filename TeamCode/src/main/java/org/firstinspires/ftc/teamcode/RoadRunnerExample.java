@@ -26,8 +26,8 @@ public final class RoadRunnerExample extends LinearOpMode {
     private CRServo intake;
 
 
-    public static double DEPOSIT_POSITION_X = 22;
-    public static double DEPOSIT_POSITION_Y = 126.5;
+    public static double DEPOSIT_POSITION_X = 21;
+    public static double DEPOSIT_POSITION_Y = 127.5;
     public static double DEPOSIT_POSITION_HEADING = 135;
     public static double DEPOSIT_POSITION_DIRECTION = 75;
     public static double PICKUP_POSITION_X = 48;
@@ -39,8 +39,8 @@ public final class RoadRunnerExample extends LinearOpMode {
     public static double PUSH_POSITION_END_Y = 115;
     public static double PUSH_POSITION_HEADING = 80;
     public static double PUSH_POSITION_DIRECTION = 180;
-    public static double PICKUP_POSITION_Y3 = 130;
-    public static int ARM_PICKUP = -2720;
+    public static double PICKUP_POSITION_Y3 = 123;
+    public static int ARM_PICKUP = -2755;
     public static int ARM_BIN =-1490;
     public static double ARM_POWER = 1.0;
     public static double LIFT_POWER = 1.0;
