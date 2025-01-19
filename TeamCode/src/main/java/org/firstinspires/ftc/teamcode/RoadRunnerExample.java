@@ -43,6 +43,9 @@ public final class RoadRunnerExample extends LinearOpMode {
     public static int ARM_PICKUP = -2755;
     public static int ARM_BIN =-1490;
     public static double ARM_POWER = 1.0;
+    public static int ARM_START = 0;
+    public static int ARM_MIDDLE = -1700;
+    public static int LIFT_START = -5;
     public static double LIFT_POWER = 1.0;
     public static double DEPOSIT_SLEEP_TIME = 1.5;
 
@@ -80,6 +83,7 @@ public final class RoadRunnerExample extends LinearOpMode {
                                     .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
                                     .build()
                     ),
+                    //first sample (above)
                     new CRServoAction(intake, 0.35),
                     new SleepAction(DEPOSIT_SLEEP_TIME),
                     drive.actionBuilder(depositPose)
@@ -88,7 +92,7 @@ public final class RoadRunnerExample extends LinearOpMode {
                             .build(),
                     new ParallelAction(
                            new MotorAction(armTurn, -2510, 0.5),
-                           new MotorAction(lift, 0, 0.30),
+                           new MotorAction(lift, LIFT_START, 0.30),
                             drive.actionBuilder(pushPose)
                                     .setTangent(-135)
                                     .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
@@ -114,7 +118,7 @@ public final class RoadRunnerExample extends LinearOpMode {
                     new SleepAction(2),
                     new ParallelAction(
                             new MotorAction(armTurn, -2510, 0.5),
-                            new MotorAction(lift, 0, 0.30),
+                            new MotorAction(lift, LIFT_START, 0.30),
                             drive.actionBuilder(depositPose)
                                     .setTangent(-30)
                                     .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
@@ -136,8 +140,13 @@ public final class RoadRunnerExample extends LinearOpMode {
                            .build()
                     ),
                     new CRServoAction(intake, 0.35),
-                    new SleepAction(2)
-            )
+                    new SleepAction(2),
+                    new ParallelAction(
+                            new MotorAction(armTurn, ARM_MIDDLE, 0.5),
+                            new MotorAction(lift,LIFT_START, 0.5)
+                    ),
+                    new MotorAction(armTurn, ARM_START, 0.5)
+            )               //reset robot
         );
 
         telemetry.addLine("Finished");
