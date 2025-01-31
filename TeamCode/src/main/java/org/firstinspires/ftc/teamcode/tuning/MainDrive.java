@@ -88,6 +88,8 @@ public class MainDrive extends LinearOpMode {
             if (gamepad2.a) {//ground
                 lift.setTargetPosition(0);
                 lift.setPower(1);
+                sleep(2000);
+                lift.setPower(0);
             } else if (gamepad2.b) {//high basket
                 lift.setTargetPosition(-1700);
                 lift.setPower(1);
@@ -121,39 +123,24 @@ public class MainDrive extends LinearOpMode {
                     armTurn.setTargetPosition(-1490);
                     armTurn.setPower(0.5);
 
-                } else if (gamepad1.b) {//ground
-                    armTurn.setTargetPosition(-2715);
+                } else if (gamepad1.b) {//hover
+                    armTurn.setTargetPosition(-2790);
                     armTurn.setPower(0.5);
                     //too low, changed it -6
                 } else if (gamepad1.x) {//drive
                     armTurn.setTargetPosition(-2490);
                     armTurn.setPower(0.5);
                 } else if (gamepad1.a) {//floor
-                    armTurn.setTargetPosition(-2780);
+                    armTurn.setTargetPosition(-2850);
                     armTurn.setPower(0.25);
+                } else if (gamepad1.dpad_down) {
+                    armTurn.setTargetPosition(-3032);
+                    armTurn.setPower(0.25);
+                    lift.setTargetPosition(-300);
+                    lift.setPower(0.25);
+                }
 
-                //driving test
-                }
-                if (gamepad1.dpad_up) {
-                    frontLeft.setPower(1);
-                } else {
-                    frontLeft.setPower(0);
-                }
-                if (gamepad1.dpad_right) {
-                    frontRight.setPower(1);
-                } else {
-                    frontRight.setPower(0);
-                }
-                if (gamepad1.dpad_left) {
-                    backLeft.setPower(1);
-                } else {
-                    backLeft.setPower(0);
-                }
-                if (gamepad1.dpad_down) {
-                    backRight.setPower(1);
-                } else {
-                    backRight.setPower(0);
-                }
+
 
 
                 //calculates/sets drive input
