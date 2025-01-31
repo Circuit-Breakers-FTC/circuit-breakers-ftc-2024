@@ -22,6 +22,13 @@ public class MainDrive extends LinearOpMode {
     private CRServo intake;
     private Servo extendArm;
     private double ticksPerRotation;
+    private void resetTarget() {
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       // armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+       // armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
 
     RevBlinkinLedDriver blinkinLedDriver;
     RevBlinkinLedDriver.BlinkinPattern pattern;
@@ -39,13 +46,13 @@ public class MainDrive extends LinearOpMode {
         backRight = hardwareMap.get(DcMotor.class, "backRight");
         backLeft = hardwareMap.get(DcMotor.class, "backLeft");
         lift = hardwareMap.get(DcMotor.class, "lift");
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setTargetPosition(0);
+  //      lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+       // lift.setTargetPosition(0);
         lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         armTurn = hardwareMap.get(DcMotor.class, "armTurn");
-        armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        armTurn.setTargetPosition(0);
+        //armTurn.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+      //  armTurn.setTargetPosition(0);
         armTurn.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         armTurn.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         intake = hardwareMap.get(CRServo.class, "intake");
@@ -71,6 +78,12 @@ public class MainDrive extends LinearOpMode {
                 telemetry.addLine("left bumper for fast mode!");
 
             }
+
+            if (gamepad2.right_bumper && gamepad2.left_bumper){
+                resetTarget();
+            //resets encoders
+            }
+
             //Lifter
             if (gamepad2.a) {//ground
                 lift.setTargetPosition(0);
@@ -119,7 +132,7 @@ public class MainDrive extends LinearOpMode {
                     armTurn.setTargetPosition(-2780);
                     armTurn.setPower(0.25);
 
-
+                //driving test
                 }
                 if (gamepad1.dpad_up) {
                     frontLeft.setPower(1);
@@ -143,9 +156,8 @@ public class MainDrive extends LinearOpMode {
                 }
 
 
-
-
-                double x = gamepad1.left_stick_x; // Strafe left/right
+                //calculates/sets drive input
+                double x = gamepad1.left_stick_x + gamepad1.left_trigger - gamepad1.right_trigger; // Strafe left/right
                 double y = -gamepad1.left_stick_y; // Forward/backward
                 double rotation = gamepad1.right_stick_x; // Rotate
 
@@ -167,7 +179,7 @@ public class MainDrive extends LinearOpMode {
                     backRightPower /= maxPower;
                 }
 
-                // Set motor powers
+                // Sets motor powers
                 frontLeft.setPower(frontLeftPower);
                 frontRight.setPower(frontRightPower);
                 backLeft.setPower(backLeftPower);

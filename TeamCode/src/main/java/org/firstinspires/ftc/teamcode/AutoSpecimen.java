@@ -21,7 +21,7 @@ public class AutoSpecimen extends LinearOpMode {
     public static int PAUSE_FOR_ARM_RESET = 900;
     public static int ARM_POSTION_RESET = 0;
     public static int GET_OFF_WALL = 400;
-    public static int DRIVE_TO_CHAMBER = 300;
+    public static int DRIVE_TO_CHAMBER = 290;
     public static int ARM_POSISION_CHAMBER = -1750;
     public static int PULL_OFF_WALL = 100;
     public static int TURN_NINTY_DEGREES = 750;
