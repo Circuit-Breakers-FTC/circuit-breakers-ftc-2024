@@ -36,7 +36,8 @@ public final class Roadrunner4High extends LinearOpMode {
     public static double PICKUP_POSITION_X = 48;
     public static double PICKUP_POSITION_Y = 105;
     public static double PICKUP_POSITION_HEADING = 90;
-    public static double PICKUP_POSITION_DIRECTION = 90;
+    public static double PICKUP_POSITION_DIRECTION = -20;
+    public static double BEFORE_4_POSE_DIRECTION = 0;
 
     // Pick up Position 2
     public static double PICKUP_POSITION_Y2 = 115;
@@ -45,10 +46,13 @@ public final class Roadrunner4High extends LinearOpMode {
     public static double PICKUP_POSITION_Y3 = 123;
 
     // Pick up Position 4
-    public static double PICKUP_POSITION_Y4 = 106.5;
+    public static double PICKUP_POSITION_Y4 = 108;
+
+    // Pick up Last Sample Position 5
+    public static double PICKUP_POSITION_Y5 = 128;
 
     // Go to before Position 4
-    public static double PICKUP_POSITION_X2 = 38;
+    public static double PICKUP_POSITION_X2 = 36;
 
     // Set the Variables
     public static int ARM_FIRST_SAMPLE = -3032;
@@ -98,7 +102,7 @@ public final class Roadrunner4High extends LinearOpMode {
         Pose2d pickupPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4,Math.toRadians((PICKUP_POSITION_HEADING)));
 
         // Go to before pick up of the first sample
-        Pose2d before4Pose = new Pose2d(PICKUP_POSITION_X2,PICKUP_POSITION_Y4, Math.toRadians(PICKUP_POSITION_DIRECTION));
+        Pose2d before4Pose = new Pose2d(PICKUP_POSITION_X2,PICKUP_POSITION_Y4, Math.toRadians(PICKUP_POSITION_HEADING));
 
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         waitForStart();
@@ -123,131 +127,140 @@ public final class Roadrunner4High extends LinearOpMode {
                         new CRServoAction(intake, 0.35),
                         new SleepAction(DEPOSIT_SLEEP_TIME),
 
-                        /** Push Sample
-                        drive.actionBuilder(depositPose)
-                                .setTangent(-90)
-                                .splineToLinearHeading(pushPose, Math.toRadians(PUSH_POSITION_DIRECTION))
-                                .build(),
-
-
-                        // Collect First Sample
-                        new ParallelAction(
-                                new MotorAction(armTurn, -2510, 0.5),
-                                new MotorAction(lift, LIFT_START, 0.30),
-                                drive.actionBuilder(pushPose)
-                                        .setTangent(-135)
-                                        .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                        .build()
-                        ),
-                        new CRServoAction(intake, -1),
-                        new MotorAction(armTurn, ARM_PICKUP, 0.5),
-                        new SleepAction(1),
-                        drive.actionBuilder(pickupPose)
-                                .setTangent(90)
-                                .splineToLinearHeading(pickupPose2, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                .build(),
-                        new SleepAction(0.5),
-
-                        // Drop First Sample
-                        new ParallelAction(
-                                new MotorAction(armTurn,ARM_BIN, 0.5),
-                                new MotorAction(lift, -1700, 0.5),
-                                drive.actionBuilder(pickupPose2)
-                                        .setTangent(180)
-                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
-                                        .build()
-                        ),
-                        new CRServoAction(intake, 0.35),
-                        new SleepAction(2),
-                        new ParallelAction(
-                                new SequentialAction(
-                                        new SleepAction(0.5),
-                                        new ParallelAction(
-                                                new MotorAction(armTurn, -2510, 0.5),
-                                                new MotorAction(lift, LIFT_START, 0.30)
-                                        )
-                                ),
-
-                                // Move to the Pick up Position
-                                drive.actionBuilder(depositPose)
-                                        .setTangent(Math.toRadians(-30))
-                                        .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                        .build()
-                        ),
-                        **/
-
                         // Pick up the First Sample
-                        new SequentialAction(
-                            new ParallelAction(
-                                    new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
-                                    new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5),
-                                    new CRServoAction(intake, -1),
-                                    drive.actionBuilder(depositPose)
-                                            .setTangent(0)
-                                            .splineToLinearHeading(before4Pose, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                            .build()
+                        binTobin(drive, depositPose, 0),
+                        binTobin(drive,depositPose, 10),
+                        binTobin1(drive, depositPose,10)
 
-                            ),
-                            new ParallelAction(
-
-                                drive.actionBuilder(before4Pose)
-                                          .setTangent(0)
-                                          .splineToLinearHeading(pickupPose4, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                          .build()
-
-                            ),
-                            new MotorAction(lift, LIFT_FIRST_SAMPLE_DOWN, 0.5),
-                            new SleepAction(1),
-                            new ParallelAction(
-                                new MotorAction(armTurn,ARM_BIN, ARM_POWER),
-                                new MotorAction(lift, -1700, LIFT_POWER),
-                                drive.actionBuilder(pickupPose4)
-                                          .setTangent(0)
-                                          .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
-                                          .build()
-
-                            ),
-                            new CRServoAction(intake, 0.35),
-                            new SleepAction(0.75),
-                                drive.actionBuilder(depositPose)
-                                        .setTangent(Math.toRadians(-30))
-                                        .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                        .build()
-                        ),
-
-                        // Pick up the Second sample
-                        new MotorAction(lift, -5, 0.5),
-                        new CRServoAction(intake, -1),
-                        new MotorAction(armTurn, ARM_PICKUP, 0.5),
-                        drive.actionBuilder(pickupPose)
-                                .setTangent(90)
-                                .splineToLinearHeading(pickupPose2, Math.toRadians(PICKUP_POSITION_DIRECTION))
-                                .build(),
-                        new SleepAction(1),
-
-                        // Drop off the Second Sample
-                        new ParallelAction(
-                                new MotorAction(armTurn,ARM_BIN, 0.5),
-                                new MotorAction(lift, -1700, 0.5),
-                                drive.actionBuilder(pickupPose2)
-                                        .setTangent(180)
-                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
-                                        .build()
-                        ),
-                        new CRServoAction(intake, 0.35),
-                        new SleepAction(2),
-
-                        // Reset the Robot
-                        new ParallelAction(
-                                new MotorAction(armTurn, ARM_MIDDLE, 0.5),
-                                new MotorAction(lift,LIFT_START, 0.5)
-                        ),
-                        new MotorAction(armTurn, ARM_START, 0.5)
                 )
         );
+
+//                                drive.actionBuilder(depositPose)
+//                                        .setTangent(Math.toRadians(-30))
+//                                        .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
+//                                        .build()
+//                        ),
+//
+//                        // Pick up the Second sample
+//                        new MotorAction(lift, -5, 0.5),
+//                        new CRServoAction(intake, -1),
+//                        new MotorAction(armTurn, ARM_PICKUP, 0.5),
+//                        drive.actionBuilder(pickupPose)
+//                                .setTangent(90)
+//                                .splineToLinearHeading(pickupPose2, Math.toRadians(PICKUP_POSITION_DIRECTION))
+//                                .build(),
+//                        new SleepAction(1),
+//
+//                        // Drop off the Second Sample
+//                        new ParallelAction(
+//                                new MotorAction(armTurn,ARM_BIN, 0.5),
+//                                new MotorAction(lift, -1700, 0.5),
+//                                drive.actionBuilder(pickupPose2)
+//                                        .setTangent(180)
+//                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
+//                                        .build()
+//                        ),
+//                        new CRServoAction(intake, 0.35),
+//                        new SleepAction(2),
+//
+//                        // Reset the Robot
+//                        new ParallelAction(
+//                                new MotorAction(armTurn, ARM_MIDDLE, 0.5),
+//                                new MotorAction(lift,LIFT_START, 0.5)
+//                        ),
+//                        new MotorAction(armTurn, ARM_START, 0.5)
+
 
         // Add line "Finish"
         telemetry.addLine("Finished");
         telemetry.update();
+    }
+
+    public SequentialAction binTobin1(MecanumDrive drive, Pose2d depositPose, double offset) {
+        // Pick up the First Sample
+        Pose2d pickupPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4+offset,Math.toRadians((PICKUP_POSITION_HEADING)));
+
+        // Go to before pick up of the first sample
+        Pose2d before4Pose = new Pose2d(PICKUP_POSITION_X2,PICKUP_POSITION_Y4+offset, Math.toRadians(PICKUP_POSITION_HEADING));
+
+        Pose2d driveToPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y5,Math.toRadians(PICKUP_POSITION_HEADING));
+
+
+        return
+                new SequentialAction(
+                        new ParallelAction(
+                                new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
+                                new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5),
+                                new CRServoAction(intake, -1),
+                                drive.actionBuilder(depositPose)
+                                        .setTangent(Math.toRadians(-45))
+                                        .splineToLinearHeading(before4Pose, Math.toRadians(0))
+                                        .splineToLinearHeading(pickupPose4,Math.toRadians(0))
+                                        .splineToLinearHeading(driveToPose4,Math.toRadians(0))
+                                        .build()
+
+                        ),
+
+
+
+
+
+                        new MotorAction(lift, LIFT_FIRST_SAMPLE_DOWN, 0.5),
+                        new SleepAction(1),
+                        new ParallelAction(
+                                new MotorAction(armTurn,ARM_BIN, ARM_POWER),
+                                new MotorAction(lift, -1700, LIFT_POWER),
+                                drive.actionBuilder(pickupPose4)
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
+                                        .build()
+
+                        ),
+                        new CRServoAction(intake, 0.35),
+                        new SleepAction(0.75)
+
+                );
+    }
+    public SequentialAction binTobin(MecanumDrive drive, Pose2d depositPose, double offset) {
+        // Pick up the First Sample
+        Pose2d pickupPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4+offset,Math.toRadians((PICKUP_POSITION_HEADING)));
+
+        // Go to before pick up of the first sample
+        Pose2d before4Pose = new Pose2d(PICKUP_POSITION_X2,PICKUP_POSITION_Y4+offset, Math.toRadians(PICKUP_POSITION_HEADING));
+
+
+        return
+                new SequentialAction(
+                        new ParallelAction(
+                                new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
+                                new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5),
+                                new CRServoAction(intake, -1),
+                                drive.actionBuilder(depositPose)
+                                        .setTangent(Math.toRadians(-45))
+                                        .splineToLinearHeading(before4Pose, Math.toRadians(0))
+                                        .splineToLinearHeading(pickupPose4,Math.toRadians(0))
+                                        .build()
+
+                        ),
+
+
+
+
+
+                        new MotorAction(lift, LIFT_FIRST_SAMPLE_DOWN, 0.5),
+                        new SleepAction(1),
+                        new ParallelAction(
+                                new MotorAction(armTurn,ARM_BIN, ARM_POWER),
+                                new MotorAction(lift, -1700, LIFT_POWER),
+                                drive.actionBuilder(pickupPose4)
+                                        .setTangent(Math.toRadians(180))
+                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
+                                        .build()
+
+                        ),
+                        new CRServoAction(intake, 0.35),
+                        new SleepAction(0.75)
+
+                );
     }
 }
