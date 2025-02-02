@@ -1,10 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.roadrunner.AccelConstraint;
+import com.acmerobotics.roadrunner.Arclength;
+import com.acmerobotics.roadrunner.MinMax;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -46,7 +54,7 @@ public final class Roadrunner4High extends LinearOpMode {
     public static double PICKUP_POSITION_Y3 = 123;
 
     // Pick up Position 4
-    public static double PICKUP_POSITION_Y4 = 108;
+    public static double PICKUP_POSITION_Y4 = 107;
 
     // Pick up Last Sample Position 5
     public static double PICKUP_POSITION_Y5 = 128;
@@ -130,7 +138,10 @@ public final class Roadrunner4High extends LinearOpMode {
                         // Pick up the First Sample
                         binTobin(drive, depositPose, 0),
                         binTobin(drive,depositPose, 10),
-                        binTobin1(drive, depositPose,10)
+                        binTobin4thSample(drive, depositPose,10),
+                        bar(drive,depositPose, 0)
+
+
 
                 )
         );
@@ -176,7 +187,7 @@ public final class Roadrunner4High extends LinearOpMode {
         telemetry.update();
     }
 
-    public SequentialAction binTobin1(MecanumDrive drive, Pose2d depositPose, double offset) {
+    public SequentialAction binTobin4thSample(MecanumDrive drive, Pose2d depositPose, double offset) {
         // Pick up the First Sample
         Pose2d pickupPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4+offset,Math.toRadians((PICKUP_POSITION_HEADING)));
 
@@ -263,4 +274,43 @@ public final class Roadrunner4High extends LinearOpMode {
 
                 );
     }
+    public SequentialAction bar(MecanumDrive drive, Pose2d depositPose, double offset) {
+        // Bar pose midpoint
+        Pose2d barPose1 = new Pose2d(60,119+offset,Math.toRadians((90)));
+
+        // Bar pose end
+        Pose2d barPose = new Pose2d(67,95+offset, Math.toRadians(90));
+
+
+
+        return
+                new SequentialAction(
+                        new ParallelAction(
+                                new MotorAction(lift,LIFT_START, 1),
+                                new MotorAction(armTurn,-700,0.5),
+                                new CRServoAction(intake, 0),
+                                drive.actionBuilder(depositPose)
+                                        .setTangent(Math.toRadians(0))
+                                        //.splineToLinearHeading(barPose1, Math.toRadians(0))
+                                        .splineToLinearHeading(barPose, Math.toRadians(-90), new VelConstraint() {
+                                            @Override
+                                            public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
+                                                return 500;
+                                            }
+                                        })
+                                        .build()
+
+                        ),
+                        new MotorAction(armTurn,-670,0.5)
+
+
+
+
+
+
+
+
+                );
+    }
 }
+
