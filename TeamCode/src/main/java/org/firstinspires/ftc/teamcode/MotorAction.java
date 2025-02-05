@@ -11,7 +11,7 @@ public class MotorAction implements Action {
     private double power;
     private int targetPosition;
     private boolean initialized = false;
-    MotorAction(DcMotor motor, int targetPosition, double power) {
+    public MotorAction(DcMotor motor, int targetPosition, double power) {
         this.motor = motor;
         this.targetPosition = targetPosition;
         this.power = power;

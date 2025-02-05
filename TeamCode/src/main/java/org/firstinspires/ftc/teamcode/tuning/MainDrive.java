@@ -1,5 +1,16 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_DIRECTION;
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_HEADING;
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_X;
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_Y;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -9,10 +20,20 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.MotorAction;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 //programmed by gabi and theo
 @TeleOp(name = "MainDrive")
 public class MainDrive extends LinearOpMode {
 
+    public static double LIFT_POWER = 1.0;
+    private List<Action> runningActions = new ArrayList<>();
     private DcMotor frontRight;
     private DcMotor frontLeft;
     private DcMotor backLeft;
@@ -66,6 +87,11 @@ public class MainDrive extends LinearOpMode {
         boolean isLaunched = false;
         boolean fastMode = false;
         // that's the fast mode ;)
+        Pose2d start = new Pose2d(67, 95, Math.toRadians(90));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, start);
+
+
+
         waitForStart();
         while (opModeIsActive()) {
             boolean i = gamepad1.b;
@@ -176,7 +202,35 @@ public class MainDrive extends LinearOpMode {
                 if (fastMode) {
                     slowness = 1.0;
                 }
-                frontLeft.setPower(frontLeftPower * slowness);
+
+            if (gamepad1.dpad_up) {
+                Pose2d depositPose = new Pose2d(DEPOSIT_POSITION_X, DEPOSIT_POSITION_Y, Math.toRadians(DEPOSIT_POSITION_HEADING));
+                runningActions.add(new SequentialAction(
+                        new SleepAction(0.5),
+                        new MotorAction(lift, -1700, LIFT_POWER),
+
+                        drive.actionBuilder(drive.pose)
+                                .setTangent(Math.toRadians(90))
+                                .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
+                                .build()
+                ));
+            }
+
+            TelemetryPacket packet = new TelemetryPacket();
+
+            List<Action> newActions = new ArrayList<>();
+            for (Action action : runningActions) {
+                action.preview(packet.fieldOverlay());
+                if (action.run(packet)) {
+                    newActions.add(action);
+                }
+            }
+            runningActions = newActions;
+
+
+
+
+            frontLeft.setPower(frontLeftPower * slowness);
                 backLeft.setPower(backLeftPower * slowness);
                 frontRight.setPower(frontRightPower * slowness);
                 backRight.setPower(backRightPower * slowness);
@@ -192,4 +246,7 @@ public class MainDrive extends LinearOpMode {
             }
         }
     }
+
+
+
 
