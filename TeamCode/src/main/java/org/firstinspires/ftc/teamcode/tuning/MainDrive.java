@@ -1,16 +1,27 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.ARM_POWER;
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.BAR_HEADING;
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.BAR_POSITION_X;
+import static org.firstinspires.ftc.teamcode.Roadrunner4High.BAR_POSITION_Y;
 import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_DIRECTION;
 import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_HEADING;
 import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_X;
 import static org.firstinspires.ftc.teamcode.Roadrunner4High.DEPOSIT_POSITION_Y;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.Arclength;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Pose2dDual;
+import com.acmerobotics.roadrunner.PosePath;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -87,13 +98,18 @@ public class MainDrive extends LinearOpMode {
         boolean isLaunched = false;
         boolean fastMode = false;
         // that's the fast mode ;)
-        Pose2d start = new Pose2d(67, 95, Math.toRadians(90));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, start);
+        Pose2d barPose = new Pose2d(BAR_POSITION_X,BAR_POSITION_Y, Math.toRadians(BAR_HEADING));
+
+        MecanumDrive drive = new MecanumDrive(hardwareMap, barPose);
 
 
 
         waitForStart();
+        Action runningAction = null;
+        Pose2d depositPose = new Pose2d(DEPOSIT_POSITION_X, DEPOSIT_POSITION_Y, Math.toRadians(DEPOSIT_POSITION_HEADING));
+
         while (opModeIsActive()) {
+            drive.updatePoseEstimate();
             boolean i = gamepad1.b;
             //   directions
             int target = 0;
@@ -105,16 +121,16 @@ public class MainDrive extends LinearOpMode {
 
             }
 
-            if (gamepad2.right_bumper && gamepad2.left_bumper){
+            if (gamepad2.right_bumper && gamepad2.left_bumper) {
                 resetTarget();
-            //resets encoders
+                //resets encoders
             }
 
             //Lifter
             if (gamepad2.a) {//ground
                 lift.setTargetPosition(0);
                 lift.setPower(1);
-                sleep(2000);
+            } else if (gamepad2.x) {
                 lift.setPower(0);
             } else if (gamepad2.b) {//high basket
                 lift.setTargetPosition(-1700);
@@ -144,93 +160,101 @@ public class MainDrive extends LinearOpMode {
                 blinkinLedDriver.setPattern(pattern);
                 //stop
             }
-                //Arm code
-                if (gamepad1.y) { //basket
-                    armTurn.setTargetPosition(-1490);
-                    armTurn.setPower(0.5);
+            //Arm code
+            if (gamepad1.y) { //basket
+                armTurn.setTargetPosition(-1490);
+                armTurn.setPower(0.5);
 
-                } else if (gamepad1.b) {//hover
-                    armTurn.setTargetPosition(-2790);
-                    armTurn.setPower(0.5);
-                    //too low, changed it -6
-                } else if (gamepad1.x) {//drive
-                    armTurn.setTargetPosition(-2490);
-                    armTurn.setPower(0.5);
-                } else if (gamepad1.a) {//floor
-                    armTurn.setTargetPosition(-2850);
-                    armTurn.setPower(0.25);
-                } else if (gamepad1.dpad_down) {
-                    armTurn.setTargetPosition(-3032);
-                    armTurn.setPower(0.25);
-                    lift.setTargetPosition(-300);
-                    lift.setPower(0.25);
-                }
-
-
-
-
-                //calculates/sets drive input
-                double x = gamepad1.left_stick_x + gamepad1.left_trigger - gamepad1.right_trigger; // Strafe left/right
-                double y = -gamepad1.left_stick_y; // Forward/backward
-                double rotation = gamepad1.right_stick_x; // Rotate
-
-
-
-                // Calculate motor powers
-                double frontLeftPower = y + x + rotation;
-                double frontRightPower = y - x - rotation;
-                double backLeftPower = y - x + rotation;
-                double backRightPower = y + x - rotation;
-                double slowness = (.3);
-                // Normalize motor powers to ensure they don't exceed 1.0
-                double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
-                        Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
-                if (maxPower > 1.0) {
-                    frontLeftPower /= maxPower;
-                    frontRightPower /= maxPower;
-                    backLeftPower /= maxPower;
-                    backRightPower /= maxPower;
-                }
-
-                // Sets motor powers
-                frontLeft.setPower(frontLeftPower);
-                frontRight.setPower(frontRightPower);
-                backLeft.setPower(backLeftPower);
-                backRight.setPower(backRightPower);
-
-
-                if (fastMode) {
-                    slowness = 1.0;
-                }
-
-            if (gamepad1.dpad_up) {
-                Pose2d depositPose = new Pose2d(DEPOSIT_POSITION_X, DEPOSIT_POSITION_Y, Math.toRadians(DEPOSIT_POSITION_HEADING));
-                runningActions.add(new SequentialAction(
-                        new SleepAction(0.5),
-                        new MotorAction(lift, -1700, LIFT_POWER),
-
-                        drive.actionBuilder(drive.pose)
-                                .setTangent(Math.toRadians(90))
-                                .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
-                                .build()
-                ));
+            } else if (gamepad1.b) {//hover
+                armTurn.setTargetPosition(-2790);
+                armTurn.setPower(0.5);
+                //too low, changed it -6
+            } else if (gamepad1.x) {//drive
+                armTurn.setTargetPosition(-2490);
+                armTurn.setPower(0.5);
+            } else if (gamepad1.a) {//floor
+                armTurn.setTargetPosition(-2850);
+                armTurn.setPower(0.25);
             }
 
+
+            //calculates/sets drive input
+            double x = gamepad1.left_stick_x - gamepad1.left_trigger + gamepad1.right_trigger; // Strafe left/right
+            double y = -gamepad1.left_stick_y; // Forward/backward
+            double rotation = gamepad1.right_stick_x; // Rotate
+
+
+            // Calculate motor powers
+            double frontLeftPower = y + x + rotation;
+            double frontRightPower = y - x - rotation;
+            double backLeftPower = y - x + rotation;
+            double backRightPower = y + x - rotation;
+            double slowness = (.5);
+            // Normalize motor powers to ensure they don't exceed 1.0
+            double maxPower = Math.max(Math.abs(frontLeftPower), Math.max(Math.abs(frontRightPower),
+                    Math.max(Math.abs(backLeftPower), Math.abs(backRightPower))));
+            if (maxPower > 1.0) {
+                frontLeftPower /= maxPower;
+                frontRightPower /= maxPower;
+                backLeftPower /= maxPower;
+                backRightPower /= maxPower;
+            }
+
+            if (fastMode) {
+                slowness = 1.0;
+            }
             TelemetryPacket packet = new TelemetryPacket();
+            if (gamepad1.dpad_up || gamepad1.dpad_down) {
+                // automatic drive mode
+                if (gamepad1.dpad_up && runningAction == null) {
+                    runningAction = new ParallelAction(
+//
+                            new MotorAction(lift, -1700, LIFT_POWER),
+                            new MotorAction(armTurn, -1490, ARM_POWER),
 
-            List<Action> newActions = new ArrayList<>();
-            for (Action action : runningActions) {
-                action.preview(packet.fieldOverlay());
-                if (action.run(packet)) {
-                    newActions.add(action);
+                            drive.actionBuilder(drive.pose)
+                                    .setTangent(Math.toRadians(90))
+                                    .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION), new VelConstraint() {
+                                        @Override
+                                        public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
+                                            return 100;
+                                        }
+                                    })
+                                    .build()
+                    );
                 }
-            }
-            runningActions = newActions;
+                if (gamepad1.dpad_down && runningAction == null) {
+                    Pose2d samplePickup = new Pose2d (BAR_POSITION_X,120,Math.toRadians(-90));
+                    runningAction = new ParallelAction(
+                            new SequentialAction(
+                                    new SleepAction(0.5),
+                                        new ParallelAction(
+                                            new MotorAction(lift, 0, LIFT_POWER),
+                                            new MotorAction(armTurn, -2490, ARM_POWER)
+                                        )
+                            ),
 
-
-
-
-            frontLeft.setPower(frontLeftPower * slowness);
+                            drive.actionBuilder(drive.pose)
+                                    .setTangent(Math.toRadians(-90))
+                                    .splineToLinearHeading(samplePickup, Math.toRadians(-90), new VelConstraint() {
+                                        @Override
+                                        public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
+                                            return 100;
+                                        }
+                                    })
+                                    .build()
+                    );
+                }
+                //runningAction.preview(packet.fieldOverlay());
+                if (runningAction.run(packet)) {
+                    telemetry.addLine("Roadrunner action still running");
+                } else {
+                    telemetry.addLine("Roadrunner action finished");
+                }
+            } else {
+                // manual drive
+                runningAction = null;
+                frontLeft.setPower(frontLeftPower * slowness);
                 backLeft.setPower(backLeftPower * slowness);
                 frontRight.setPower(frontRightPower * slowness);
                 backRight.setPower(backRightPower * slowness);
@@ -241,11 +265,18 @@ public class MainDrive extends LinearOpMode {
                 telemetry.addData("lift Current Position", lift.getCurrentPosition());
                 telemetry.addData("Target Position", lift.getTargetPosition());
                 telemetry.addData("Unfold Arm Current Position", extendArm.getPosition());
-                telemetry.update();
-
             }
+
+
+            telemetry.addData("pose x", drive.pose.position.x);
+            telemetry.addData("pose y", drive.pose.position.y);
+            telemetry.addData("heading", drive.pose.heading);
+            telemetry.update();
+
         }
     }
+}
+
 
 
 

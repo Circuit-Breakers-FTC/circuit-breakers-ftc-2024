@@ -54,7 +54,7 @@ public final class Roadrunner4High extends LinearOpMode {
     public static double PICKUP_POSITION_Y3 = 123;
 
     // Pick up Position 4
-    public static double PICKUP_POSITION_Y4 = 107;
+    public static double PICKUP_POSITION_Y4 = 108;
 
     // Pick up Last Sample Position 5
     public static double PICKUP_POSITION_Y5 = 128;
@@ -73,7 +73,12 @@ public final class Roadrunner4High extends LinearOpMode {
     public static int ARM_MIDDLE = -1000;
     public static int LIFT_START = -5;
     public static double LIFT_POWER = 1.0;
-    public static double DEPOSIT_SLEEP_TIME = 1.5;
+    public static double DEPOSIT_SLEEP_TIME = 0.5;
+    public static double DEPOSIT_SLEEP_TIME_PRE = 0.75;
+
+    public static double BAR_POSITION_X = 65;
+    public static double BAR_POSITION_Y = 102;//95;
+    public static double BAR_HEADING = -90;
 
     public void runOpMode() throws InterruptedException {
         lift = hardwareMap.get(DcMotor.class, "lift");
@@ -94,24 +99,6 @@ public final class Roadrunner4High extends LinearOpMode {
         // Bin position/drop off position
         Pose2d depositPose = new Pose2d(DEPOSIT_POSITION_X, DEPOSIT_POSITION_Y, Math.toRadians(DEPOSIT_POSITION_HEADING));
 
-        // Push away the first sample
-        Pose2d pushPose = new Pose2d(PUSH_POSITION_END_X,PUSH_POSITION_END_Y,Math.toRadians((PUSH_POSITION_HEADING)));
-
-        // Next to the sub before moving forward to pick up the samples
-        Pose2d pickupPose = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y,Math.toRadians((PICKUP_POSITION_HEADING)));
-
-        // Pick up the Second sample
-        Pose2d pickupPose2 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y2,Math.toRadians((PICKUP_POSITION_HEADING)));
-
-        // Pick up the Third sample
-        Pose2d pickupPose3 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y3,Math.toRadians((PICKUP_POSITION_HEADING)));
-
-        // Pick up the First Sample
-        Pose2d pickupPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4,Math.toRadians((PICKUP_POSITION_HEADING)));
-
-        // Go to before pick up of the first sample
-        Pose2d before4Pose = new Pose2d(PICKUP_POSITION_X2,PICKUP_POSITION_Y4, Math.toRadians(PICKUP_POSITION_HEADING));
-
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         waitForStart();
 
@@ -130,16 +117,20 @@ public final class Roadrunner4High extends LinearOpMode {
                                 drive.actionBuilder(beginPose)
                                         .setTangent(0)
                                         .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
-                                        .build()
+                                        .build(),
+                                new SequentialAction(
+                                        new SleepAction(DEPOSIT_SLEEP_TIME_PRE),
+                                        new CRServoAction(intake, 0.35)//first deposit
+                                )
+
                         ),
-                        new CRServoAction(intake, 0.35),
                         new SleepAction(DEPOSIT_SLEEP_TIME),
 
 
                         // Pick up the First Sample
                         binTobin(drive, depositPose, 0),
                         binTobin(drive,depositPose, 10),
-                        binTobin4thSample(drive, depositPose,10),
+                        binTobin4thSample(drive, depositPose,8),
                         bar(drive,depositPose, 0)
 
 
@@ -147,42 +138,7 @@ public final class Roadrunner4High extends LinearOpMode {
                 )
         );
 
-
-//                                drive.actionBuilder(depositPose)
-//                                        .setTangent(Math.toRadians(-30))
-//                                        .splineToLinearHeading(pickupPose, Math.toRadians(PICKUP_POSITION_DIRECTION))
-//                                        .build()
-//                        ),
-//
-//                        // Pick up the Second sample
-//                        new MotorAction(lift, -5, 0.5),
-//                        new CRServoAction(intake, -1),
-//                        new MotorAction(armTurn, ARM_PICKUP, 0.5),
-//                        drive.actionBuilder(pickupPose)
-//                                .setTangent(90)
-//                                .splineToLinearHeading(pickupPose2, Math.toRadians(PICKUP_POSITION_DIRECTION))
-//                                .build(),
-//                        new SleepAction(1),
-//
-//                        // Drop off the Second Sample
-//                        new ParallelAction(
-//                                new MotorAction(armTurn,ARM_BIN, 0.5),
-//                                new MotorAction(lift, -1700, 0.5),
-//                                drive.actionBuilder(pickupPose2)
-//                                        .setTangent(180)
-//                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
-//                                        .build()
-//                        ),
-//                        new CRServoAction(intake, 0.35),
-//                        new SleepAction(2),
-//
-//                        // Reset the Robot
-//                        new ParallelAction(
-//                                new MotorAction(armTurn, ARM_MIDDLE, 0.5),
-//                                new MotorAction(lift,LIFT_START, 0.5)
-//                        ),
-//                        new MotorAction(armTurn, ARM_START, 0.5)
-
+        armTurn.setPower(0);
 
         // Add line "Finish"
         telemetry.addLine("Finished");
@@ -202,14 +158,19 @@ public final class Roadrunner4High extends LinearOpMode {
         return
                 new SequentialAction(
                         new ParallelAction(
-                                new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
-                                new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5),
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        new ParallelAction(
+                                                new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
+                                                new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5)
+                                        )
+                                ),
                                 new CRServoAction(intake, -1),
                                 drive.actionBuilder(depositPose)
                                         .setTangent(Math.toRadians(-45))
-                                        .splineToLinearHeading(before4Pose, Math.toRadians(0))
-                                        .splineToLinearHeading(pickupPose4,Math.toRadians(0))
-                                        .splineToLinearHeading(driveToPose4,Math.toRadians(0))
+                                        .splineToLinearHeading(before4Pose, Math.toRadians(0), new MaxVelocity(20))
+                                        .splineToLinearHeading(pickupPose4,Math.toRadians(0), new MaxVelocity(20))
+                                        .splineToLinearHeading(driveToPose4,Math.toRadians(0), new MaxVelocity(20))
                                         .build()
 
                         ),
@@ -219,7 +180,7 @@ public final class Roadrunner4High extends LinearOpMode {
 
 
                         new MotorAction(lift, LIFT_FIRST_SAMPLE_DOWN, 0.5),
-                        new SleepAction(1),
+                        new SleepAction(0.5),
                         new ParallelAction(
                                 new MotorAction(armTurn,ARM_BIN, ARM_POWER),
                                 new MotorAction(lift, -1700, LIFT_POWER),
@@ -229,14 +190,14 @@ public final class Roadrunner4High extends LinearOpMode {
                                         .build()
 
                         ),
-                        new CRServoAction(intake, 0.35),
+                        new CRServoAction(intake, 0.35),    //deposit 4
                         new SleepAction(0.75)
 
                 );
     }
     public SequentialAction binTobin(MecanumDrive drive, Pose2d depositPose, double offset) {
         // Pick up the First Sample
-        Pose2d pickupPose4 = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4+offset,Math.toRadians((PICKUP_POSITION_HEADING)));
+        Pose2d pickupPose = new Pose2d(PICKUP_POSITION_X,PICKUP_POSITION_Y4+offset,Math.toRadians((PICKUP_POSITION_HEADING)));
 
         // Go to before pick up of the first sample
         Pose2d before4Pose = new Pose2d(PICKUP_POSITION_X2,PICKUP_POSITION_Y4+offset, Math.toRadians(PICKUP_POSITION_HEADING));
@@ -245,13 +206,18 @@ public final class Roadrunner4High extends LinearOpMode {
         return
                 new SequentialAction(
                         new ParallelAction(
-                                new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
-                                new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5),
+                                new SequentialAction(
+                                        new SleepAction(0.5),
+                                        new ParallelAction(
+                                            new MotorAction(lift,LIFT_FIRST_SAMPLE_UP, 0.5),
+                                            new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5)
+                                        )
+                                ),
                                 new CRServoAction(intake, -1),
                                 drive.actionBuilder(depositPose)
                                         .setTangent(Math.toRadians(-45))
-                                        .splineToLinearHeading(before4Pose, Math.toRadians(0))
-                                        .splineToLinearHeading(pickupPose4,Math.toRadians(0))
+                                        .splineToLinearHeading(before4Pose, Math.toRadians(0), new MaxVelocity(20))
+                                        .splineToLinearHeading(pickupPose,Math.toRadians(0), new MaxVelocity(20))
                                         .build()
 
                         ),
@@ -261,17 +227,17 @@ public final class Roadrunner4High extends LinearOpMode {
 
 
                         new MotorAction(lift, LIFT_FIRST_SAMPLE_DOWN, 0.5),
-                        new SleepAction(1),
+                        new SleepAction(0.75),
                         new ParallelAction(
                                 new MotorAction(armTurn,ARM_BIN, ARM_POWER),
                                 new MotorAction(lift, -1700, LIFT_POWER),
-                                drive.actionBuilder(pickupPose4)
+                                drive.actionBuilder(pickupPose)
                                         .setTangent(Math.toRadians(180))
-                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION))
+                                        .splineToLinearHeading(depositPose, Math.toRadians(DEPOSIT_POSITION_DIRECTION), new MaxVelocity(20))
                                         .build()
 
                         ),
-                        new CRServoAction(intake, 0.35),
+                        new CRServoAction(intake, 0.35),    //deposit 2,3
                         new SleepAction(0.75)
 
                 );
@@ -281,7 +247,7 @@ public final class Roadrunner4High extends LinearOpMode {
         Pose2d barPose1 = new Pose2d(60,119+offset,Math.toRadians((90)));
 
         // Bar pose end
-        Pose2d barPose = new Pose2d(67,95+offset, Math.toRadians(90));
+        Pose2d barPose = new Pose2d(BAR_POSITION_X,BAR_POSITION_Y, Math.toRadians(BAR_HEADING));
 
 
 
@@ -289,21 +255,19 @@ public final class Roadrunner4High extends LinearOpMode {
                 new SequentialAction(
                         new ParallelAction(
                                 new MotorAction(lift,LIFT_START, 1),
-                                new MotorAction(armTurn,-700,0.5),
+                                new MotorAction(armTurn,-1600,0.5),
                                 new CRServoAction(intake, 0),
                                 drive.actionBuilder(depositPose)
                                         .setTangent(Math.toRadians(0))
                                         //.splineToLinearHeading(barPose1, Math.toRadians(0))
-                                        .splineToLinearHeading(barPose, Math.toRadians(-90), new VelConstraint() {
-                                            @Override
-                                            public double maxRobotVel(@NonNull Pose2dDual<Arclength> pose2dDual, @NonNull PosePath posePath, double v) {
-                                                return 500;
-                                            }
-                                        })
-                                        .build()
+                                        .splineToLinearHeading(barPose, Math.toRadians(-90), new MaxVelocity(500))
+                                        .build(),
+                                new SequentialAction(
+                                        new SleepAction(2.0),
+                                        new MotorAction(armTurn,-1988,0.5)
+                                )
 
-                        ),
-                        new MotorAction(armTurn,-670,0.5)
+                        )
 
 
 
