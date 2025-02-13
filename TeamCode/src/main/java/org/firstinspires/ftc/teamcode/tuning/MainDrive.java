@@ -32,6 +32,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.CRServoAction;
+import org.firstinspires.ftc.teamcode.MaxVelocity;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.MotorAction;
 
@@ -204,7 +206,7 @@ public class MainDrive extends LinearOpMode {
                 slowness = 1.0;
             }
             TelemetryPacket packet = new TelemetryPacket();
-            if (gamepad1.dpad_up || gamepad1.dpad_down) {
+            if (gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left) {
                 // automatic drive mode
                 if (gamepad1.dpad_up && runningAction == null) {
                     runningAction = new ParallelAction(
@@ -242,6 +244,15 @@ public class MainDrive extends LinearOpMode {
                                             return 100;
                                         }
                                     })
+                                    .build()
+                    );
+                }
+                if (gamepad1.dpad_left && runningAction == null) {
+                    Pose2d robotPark = new Pose2d (12, 24,Math.toRadians(90));
+                    runningAction = new ParallelAction(
+                            drive.actionBuilder(drive.pose)
+                                    .setTangent(Math.toRadians(-90))
+                                    .splineToLinearHeading(robotPark, Math.toRadians(-90),new MaxVelocity(1000))
                                     .build()
                     );
                 }

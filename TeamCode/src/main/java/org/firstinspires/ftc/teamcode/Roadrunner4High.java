@@ -213,7 +213,7 @@ public final class Roadrunner4High extends LinearOpMode {
                                             new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5)
                                         )
                                 ),
-                                new CRServoAction(intake, -1),
+                                new CRServoAction(intake, -0.5),
                                 drive.actionBuilder(depositPose)
                                         .setTangent(Math.toRadians(-45))
                                         .splineToLinearHeading(before4Pose, Math.toRadians(0), new MaxVelocity(20))
