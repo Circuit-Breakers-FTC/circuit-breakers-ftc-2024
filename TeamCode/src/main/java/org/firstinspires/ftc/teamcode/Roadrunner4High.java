@@ -165,7 +165,7 @@ public final class Roadrunner4High extends LinearOpMode {
                                                 new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5)
                                         )
                                 ),
-                                new CRServoAction(intake, -1),
+                                new CRServoAction(intake, -0.3),
                                 drive.actionBuilder(depositPose)
                                         .setTangent(Math.toRadians(-45))
                                         .splineToLinearHeading(before4Pose, Math.toRadians(0), new MaxVelocity(20))
@@ -180,7 +180,7 @@ public final class Roadrunner4High extends LinearOpMode {
 
 
                         new MotorAction(lift, LIFT_FIRST_SAMPLE_DOWN, 0.5),
-                        new SleepAction(0.5),
+                        new SleepAction(0.75),
                         new ParallelAction(
                                 new MotorAction(armTurn,ARM_BIN, ARM_POWER),
                                 new MotorAction(lift, -1700, LIFT_POWER),
@@ -213,7 +213,7 @@ public final class Roadrunner4High extends LinearOpMode {
                                             new MotorAction(armTurn,ARM_FIRST_SAMPLE,0.5)
                                         )
                                 ),
-                                new CRServoAction(intake, -0.5),
+                                new CRServoAction(intake, -0.3),
                                 drive.actionBuilder(depositPose)
                                         .setTangent(Math.toRadians(-45))
                                         .splineToLinearHeading(before4Pose, Math.toRadians(0), new MaxVelocity(20))
